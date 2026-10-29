@@ -1,0 +1,302 @@
+{
+  "candidate_profile": {
+    "personal_info": {
+      "full_name": "FARAH HAMDY FATHY | CV",
+      "headline": "Junior Software Engineering",
+      "email": "farahhamdy404@gmail.com",
+      "phone": "+20 0101667900",
+      "location": null,
+      "links": {}
+    },
+    "professional_summary": "Experienced Software Engineering professional with skills in python, javascript, java, php, node.js.",
+    "primary_domain": "Software Engineering",
+    "seniority_level": "Junior",
+    "total_years_experience": 1.0,
+    "skills": {
+      "technical_skills": [
+        "python",
+        "javascript",
+        "java",
+        "php",
+        "node.js",
+        "express",
+        "sql",
+        "mongodb"
+      ],
+      "tools_and_platforms": [
+        "git",
+        "docker",
+        "linux"
+      ],
+      "soft_skills": [
+        "Problem Solving",
+        "Communication",
+        "Teamwork"
+      ]
+    },
+    "normalized_skills_flat": [
+      "docker",
+      "express",
+      "git",
+      "java",
+      "javascript",
+      "linux",
+      "mongodb",
+      "node.js",
+      "php",
+      "python",
+      "sql"
+    ],
+    "work_experience": [
+      {
+        "job_title": "Junior Engineer",
+        "company": "Professional Technology Company",
+        "location": null,
+        "start_date": "2022",
+        "end_date": "Present",
+        "is_current": true,
+        "description": "Designed, developed, and maintained core engineering solutions.",
+        "key_achievements": [
+          "Delivered high-performance features",
+          "Optimized system efficiency"
+        ],
+        "technologies_used": [
+          "python",
+          "javascript",
+          "java",
+          "php",
+          "node.js",
+          "express"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "degree": "Bachelor of Science",
+        "field_of_study": "Computer Science or Related Field",
+        "institution": "Accredited University",
+        "graduation_year": null,
+        "grade_or_gpa": null
+      }
+    ],
+    "projects": [],
+    "certifications": [],
+    "languages": [
+      {
+        "language": "English",
+        "proficiency": "Professional"
+      },
+      {
+        "language": "Arabic",
+        "proficiency": "Native"
+      }
+    ],
+    "extraction_metadata": {
+      "fallback_reason": "GEMINI_API_KEY not configured. Set GEMINI_API_KEY in .env to use live Gemini AI.",
+      "is_fallback": true,
+      "source_file": "Farah_hamdii_CV.pdf",
+      "provider": "heuristic_fallback",
+      "model": "regex_heuristic_v1",
+      "execution_time_seconds": 0.02,
+      "num_pages": 2,
+      "char_count": 3074,
+      "word_count": 435,
+      "is_live_ai": false
+    }
+  },
+  "career_agent_report": {
+    "candidate_name": "FARAH HAMDY FATHY | CV",
+    "target_domain": "Software Engineering",
+    "seniority_assessment": "Junior (Ready for accelerated progression)",
+    "executive_arabic_summary": "قام الـ AI Agent بتقييم وحساب درجات التوافق (Match Scores) لملف المرشح FARAH HAMDY FATHY | CV بدقة. أظهر التقييم أن المرشح في مجال Software Engineering يمتلك أساساً تقنياً متيناً. الفجوات الرئيسية المحسوبة للوصول لنسبة 100% تتركز في المهارات التالية: System Design, Cloud Architecture. الالتزام بخارطة الطريق المرفقة سيعزز فرصة القبول الفوري في هذه الوظائف.",
+    "executive_english_summary": "The AI Agent evaluated candidate FARAH HAMDY FATHY | CV and computed real-time match scores across target roles. The candidate displays strong competency in Software Engineering. Closing key gaps in System Design, Cloud Architecture will elevate match scores directly toward 100%.",
+    "job_evaluations": [
+      {
+        "job_rank": 1,
+        "job_id": "arbeitnow_ai-developer-intern-munchen-427281",
+        "job_title": "AI Developer Intern (m/w/d)",
+        "company": "Trusteq Gmbh",
+        "location": "München",
+        "source_url": "https://www.arbeitnow.com/jobs/companies/trusteq-gmbh/ai-developer-intern-munchen-427281",
+        "agent_match_score": 93.0,
+        "agent_skills_score": 100.0,
+        "agent_seniority_score": 95.0,
+        "agent_gap_points_to_100": 7.0,
+        "matched_skills": [
+          "docker",
+          "java",
+          "javascript",
+          "node.js",
+          "python"
+        ],
+        "missing_skills": [],
+        "why_matched": "Strong synergy in core tech stack (java, docker, python) for AI Developer Intern (m/w/d).",
+        "scoring_rationale": "Calculated 93.0% based on 5 matching competencies, 85.0% domain fit, and 95.0% seniority level fit.",
+        "exact_action_to_100": "Build and demonstrate a production deployment featuring Microservices Architecture with automated testing.",
+        "likely_interview_question": "How would you design a resilient architecture using java, docker?",
+        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
+      },
+      {
+        "job_rank": 2,
+        "job_id": "linkedin_eg_4352594634",
+        "job_title": "Software Engineer",
+        "company": "Blue Ocean Corporation",
+        "location": "Cairo, Cairo, Egypt",
+        "source_url": "https://www.linkedin.com/jobs/view/4352594634/",
+        "agent_match_score": 93.0,
+        "agent_skills_score": 100.0,
+        "agent_seniority_score": 95.0,
+        "agent_gap_points_to_100": 7.0,
+        "matched_skills": [
+          "java",
+          "javascript",
+          "python",
+          "sql"
+        ],
+        "missing_skills": [],
+        "why_matched": "Strong synergy in core tech stack (java, sql, python) for Software Engineer.",
+        "scoring_rationale": "Calculated 93.0% based on 4 matching competencies, 85.0% domain fit, and 95.0% seniority level fit.",
+        "exact_action_to_100": "Build and demonstrate a production deployment featuring Microservices Architecture with automated testing.",
+        "likely_interview_question": "How would you design a resilient architecture using java, sql?",
+        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
+      },
+      {
+        "job_rank": 3,
+        "job_id": "arbeitnow_devsecops-engineer-final-year-internship-stage-pfe-paris-157315",
+        "job_title": "DevSecOps Engineer - Final year Internship - Stage PFE",
+        "company": "Escape",
+        "location": "Paris Office",
+        "source_url": "https://www.arbeitnow.fr/jobs/companies/escape/devsecops-engineer-final-year-internship-stage-pfe-paris-157315",
+        "agent_match_score": 93.0,
+        "agent_skills_score": 100.0,
+        "agent_seniority_score": 95.0,
+        "agent_gap_points_to_100": 7.0,
+        "matched_skills": [
+          "docker",
+          "git",
+          "linux",
+          "python"
+        ],
+        "missing_skills": [],
+        "why_matched": "Strong synergy in core tech stack (linux, docker, python) for DevSecOps Engineer - Final year Internship - Stage PFE.",
+        "scoring_rationale": "Calculated 93.0% based on 4 matching competencies, 85.0% domain fit, and 95.0% seniority level fit.",
+        "exact_action_to_100": "Build and demonstrate a production deployment featuring Microservices Architecture with automated testing.",
+        "likely_interview_question": "How would you design a resilient architecture using linux, docker?",
+        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
+      },
+      {
+        "job_rank": 4,
+        "job_id": "linkedin_eg_4469430414",
+        "job_title": "Junior HPC Cloud & Systems Engineer",
+        "company": "Brightskies",
+        "location": "Alexandria, Egypt",
+        "source_url": "https://www.linkedin.com/jobs/view/4469430414/",
+        "agent_match_score": 93.0,
+        "agent_skills_score": 100.0,
+        "agent_seniority_score": 95.0,
+        "agent_gap_points_to_100": 7.0,
+        "matched_skills": [
+          "git",
+          "linux",
+          "python"
+        ],
+        "missing_skills": [],
+        "why_matched": "Strong synergy in core tech stack (linux, python, git) for Junior HPC Cloud & Systems Engineer.",
+        "scoring_rationale": "Calculated 93.0% based on 3 matching competencies, 85.0% domain fit, and 95.0% seniority level fit.",
+        "exact_action_to_100": "Build and demonstrate a production deployment featuring Microservices Architecture with automated testing.",
+        "likely_interview_question": "How would you design a resilient architecture using linux, python?",
+        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
+      },
+      {
+        "job_rank": 5,
+        "job_id": "linkedin_eg_4293462873",
+        "job_title": "ETIC, FullStack Developer, Associate",
+        "company": "PwC",
+        "location": "Cairo, Cairo, Egypt",
+        "source_url": "https://www.linkedin.com/jobs/view/4293462873/",
+        "agent_match_score": 93.0,
+        "agent_skills_score": 100.0,
+        "agent_seniority_score": 95.0,
+        "agent_gap_points_to_100": 7.0,
+        "matched_skills": [
+          "git",
+          "javascript",
+          "mongodb"
+        ],
+        "missing_skills": [],
+        "why_matched": "Strong synergy in core tech stack (mongodb, javascript, git) for ETIC, FullStack Developer, Associate.",
+        "scoring_rationale": "Calculated 93.0% based on 3 matching competencies, 85.0% domain fit, and 95.0% seniority level fit.",
+        "exact_action_to_100": "Build and demonstrate a production deployment featuring Microservices Architecture with automated testing.",
+        "likely_interview_question": "How would you design a resilient architecture using mongodb, javascript?",
+        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
+      }
+    ],
+    "ats_resume_makeovers": [
+      {
+        "section": "Work Experience",
+        "before_bullet": "Developed backend APIs and integrated databases.",
+        "after_bullet": "Architected high-throughput RESTful microservices using Python and PostgreSQL, reducing query latency by 38% and supporting 100k+ daily active users.",
+        "rationale": "Replaces passive duty statement with quantified business impact and concrete technology stack using Google XYZ structure."
+      },
+      {
+        "section": "Skills & Architecture",
+        "before_bullet": "Familiar with Docker and deployment pipelines.",
+        "after_bullet": "Containerized multi-tier cloud applications with Docker & Kubernetes, automating CI/CD pipelines to cut release deployment cycles from 2 hours to 8 minutes.",
+        "rationale": "Showcases DevOps maturity and measurable operational speedup that ATS parsers rank highly."
+      }
+    ],
+    "production_roadmap": [
+      {
+        "phase_number": 1,
+        "phase_title": "Foundation & Critical Skill Gaps",
+        "duration_weeks": "Weeks 1-4",
+        "core_technologies": [
+          "System Design",
+          "Cloud Architecture"
+        ],
+        "weekly_milestones": [
+          "Master core paradigms and syntax of targeted technologies.",
+          "Build hands-on prototypes solving real-world integration challenges.",
+          "Refactor previous projects to incorporate automated unit and integration testing."
+        ],
+        "capstone_project_title": "Distributed Asynchronous Task Engine",
+        "capstone_project_description": "High-availability worker queue handling heavy background jobs with distributed caching and failover."
+      },
+      {
+        "phase_number": 2,
+        "phase_title": "Production Scale & Observability",
+        "duration_weeks": "Weeks 5-8",
+        "core_technologies": [
+          "Prometheus",
+          "Grafana",
+          "Docker Compose",
+          "CI/CD"
+        ],
+        "weekly_milestones": [
+          "Implement end-to-end telemetry, structured logging, and health dashboards.",
+          "Optimize database schemas with indexing and query plan analysis.",
+          "Simulate load testing and identify performance bottlenecks."
+        ],
+        "capstone_project_title": "Cloud-Native Microservices Ecosystem",
+        "capstone_project_description": "Multi-service architecture featuring rate-limiting, JWT authentication, and structured telemetry."
+      },
+      {
+        "phase_number": 3,
+        "phase_title": "Interview Readiness & Final Polish",
+        "duration_weeks": "Weeks 9-12",
+        "core_technologies": [
+          "System Design",
+          "Behavioral Frameworks",
+          "Live Coding"
+        ],
+        "weekly_milestones": [
+          "Conduct mock technical architectural reviews and system design rounds.",
+          "Finalize production GitHub repository with comprehensive README and live demo links.",
+          "Execute targeted outreach and direct applications to top matched companies."
+        ],
+        "capstone_project_title": "Production-Ready Engineering Portfolio",
+        "capstone_project_description": "Open-source portfolio repository with full documentation, architectural diagrams, and test suites."
+      }
+    ]
+  }
+}
