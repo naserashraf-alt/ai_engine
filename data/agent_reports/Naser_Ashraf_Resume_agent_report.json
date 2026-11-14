@@ -2,87 +2,143 @@
   "candidate_profile": {
     "personal_info": {
       "full_name": "NASER ASHRAF YOUSSEF ABDEL FATTAH",
-      "headline": "Mid-Level AI / Machine Learning",
+      "headline": "Junior Data Engineer",
       "email": "naserashraf248@gmail.com",
       "phone": "+20 1508650961",
       "location": null,
       "links": {}
     },
-    "professional_summary": "Experienced AI / Machine Learning professional with skills in python, sql, aws, git, tensorflow.",
-    "primary_domain": "AI / Machine Learning",
-    "seniority_level": "Mid-Level",
-    "total_years_experience": 2.0,
+    "professional_summary": "Aspiring Junior Data Engineer with hands-on experience building end-to-end ELT pipelines, cloud-based data warehouses, and scalable data solutions using Python, SQL, dbt, Snowflake, and AWS S3. Skilled in data extraction, transformation, validation, and modeling, with additional exposure to Machine Learning, Deep Learning, and Neural Networks via Scikit-learn and TensorFlow. Passionate about building reliable, automated data platforms that turn raw data into actionable business insights, with a proven ability to deliver production-like projects individually and in teams.",
+    "primary_domain": "Data Engineering",
+    "seniority_level": "Junior",
+    "total_years_experience": 1.5,
     "skills": {
       "technical_skills": [
-        "python",
-        "sql",
         "aws",
+        "aws s3",
+        "data modeling",
+        "data warehouse",
+        "dbt",
+        "deep learning",
+        "elt",
+        "etl",
         "git",
-        "tensorflow",
-        "scikit-learn",
-        "pandas",
-        "numpy",
         "machine learning",
-        "deep learning"
+        "matplotlib",
+        "numpy",
+        "pandas",
+        "power bi",
+        "python",
+        "scikit-learn",
+        "snowflake",
+        "sql",
+        "tensorflow"
       ],
       "tools_and_platforms": [
+        "aws s3",
         "git",
-        "docker",
-        "linux"
+        "power bi"
       ],
       "soft_skills": [
         "Problem Solving",
+        "Independent Learning",
         "Communication",
-        "Teamwork"
+        "Team Collaboration"
       ]
     },
     "normalized_skills_flat": [
       "aws",
+      "aws s3",
+      "data modeling",
+      "data warehouse",
+      "dbt",
       "deep learning",
-      "docker",
+      "elt",
+      "etl",
       "git",
-      "linux",
       "machine learning",
+      "matplotlib",
       "numpy",
       "pandas",
+      "power bi",
       "python",
       "scikit-learn",
+      "snowflake",
       "sql",
       "tensorflow"
     ],
     "work_experience": [
       {
-        "job_title": "Mid-Level Engineer",
-        "company": "Professional Technology Company",
+        "job_title": "Programming Instructor",
+        "company": "iSchool (Digital Egypt Initiatives)\n2 Years",
         "location": null,
-        "start_date": "2022",
-        "end_date": "Present",
-        "is_current": true,
-        "description": "Designed, developed, and maintained core engineering solutions.",
+        "start_date": "-",
+        "end_date": null,
+        "is_current": false,
+        "description": "Delivered programming and AI fundamentals instruction over 2 years across the DEMI and DECI national initiatives, teaching students from 4th grade through 3rd secondary (senior year of high school).",
         "key_achievements": [
-          "Delivered high-performance features",
-          "Optimized system efficiency"
+          "Delivered programming and AI fundamentals instruction over 2 years across the DEMI and DECI national initiatives, teaching",
+          "students from 4th grade through 3rd secondary (senior year of high school)."
+        ],
+        "technologies_used": []
+      },
+      {
+        "job_title": "Data Engineering Trainee",
+        "company": "Rowad Masr (Microsoft Program)",
+        "location": null,
+        "start_date": "June 2025 – February 2026\n\n-",
+        "end_date": null,
+        "is_current": false,
+        "description": "Built end-to-end ELT workflows, performing extraction, transformation, and loading across multiple structured data sources.",
+        "key_achievements": [
+          "Built end-to-end ELT workflows, performing extraction, transformation, and loading across multiple structured data sources."
         ],
         "technologies_used": [
-          "python",
-          "sql",
-          "aws",
-          "git",
-          "tensorflow",
-          "scikit-learn"
+          "elt"
         ]
       }
     ],
     "education": [
       {
-        "degree": "Bachelor of Science",
+        "degree": "Bachelor of Science in Computer Science",
         "field_of_study": "Computer Science or Related Field",
-        "institution": "Accredited University",
+        "institution": "Benha University — Faculty of Computers & Artificial Intelligence",
         "graduation_year": null,
         "grade_or_gpa": null
       }
     ],
-    "projects": [],
+    "projects": [
+      {
+        "title": "End-to-End Data Engineering Project",
+        "description": "Designed an end-to-end ELT pipeline implementing Medallion Architecture (Bronze, Silver, Gold layers). Loaded data from AWS S3 into Snowflake and built dbt transformation models for analytics-ready datasets. Implemented SCD Type 2 and Incremental Models, and performed automated data quality testing to ensure integrity. Designed One Big Table (OBT) and Star Schema data models to support flexible, performant analytics.",
+        "technologies": [
+          "snowflake",
+          "dbt",
+          "elt",
+          "aws s3",
+          "aws"
+        ],
+        "url": null
+      },
+      {
+        "title": "Energy Data Warehouse ELT Pipeline (DEPI Graduation Project)",
+        "description": "Built a production-like data warehouse processing the IDEAL dataset covering energy data from 255 UK households. Designed ELT pipelines to ingest, transform, and load large-scale household energy consumption data. Built Power BI dashboards generating business insights on energy consumption and efficiency for data-driven decisions. Collaborated within a team environment to deliver the project end-to-end on schedule.",
+        "technologies": [
+          "elt",
+          "data warehouse",
+          "power bi"
+        ],
+        "url": null
+      },
+      {
+        "title": "Python Data Processing Project",
+        "description": "Automated data processing, cleaning, and filtering in Python to prepare raw datasets for analysis and reporting. Generated reports and reusable processing scripts to standardize repeatable data tasks.",
+        "technologies": [
+          "python"
+        ],
+        "url": null
+      }
+    ],
     "certifications": [],
     "languages": [
       {
@@ -100,212 +156,239 @@
       "source_file": "Naser_Ashraf_Resume.pdf",
       "provider": "heuristic_fallback",
       "model": "regex_heuristic_v1",
-      "execution_time_seconds": 0.03,
+      "execution_time_seconds": 0.09,
       "num_pages": 1,
       "char_count": 4520,
       "word_count": 585,
-      "is_live_ai": false
+      "is_live_ai": false,
+      "verified_tenure_years": 1.5
     }
   },
   "career_agent_report": {
     "candidate_name": "NASER ASHRAF YOUSSEF ABDEL FATTAH",
-    "target_domain": "AI / Machine Learning",
-    "seniority_assessment": "Mid-Level (Ready for accelerated progression)",
-    "executive_arabic_summary": "قام الـ AI Agent بتقييم القدرة التنفيذية المباشرة لملف المرشح NASER ASHRAF YOUSSEF ABDEL FATTAH (الإجابة العملية على: هل يقدر يشتغل الوظيفة؟). أظهر التقييم أن المرشح في مجال AI / Machine Learning يمتلك الكفاءة البرمجية الأساسية للتنفيذ الفوري. ولمضاعفة نسبة القبول، تم تحديد خطة عمل إجرائية لكل وظيفة وسد الفجوات المتمثلة في: System Design, Cloud Architecture. تطبيق صيغ الـ ATS المرفقة (Google XYZ) وخارطة طريق الـ 12 أسبوعاً سيرفع نسبة قبولك من أول مقابلة.",
-    "executive_english_summary": "The AI Agent evaluated candidate NASER ASHRAF YOUSSEF ABDEL FATTAH based on practical execution capability ('Can the candidate do this job?'). The candidate demonstrates strong technical delivery competence in AI / Machine Learning. To maximize hiring and acceptance rates, specific actionable steps to apply are outlined for every target opportunity, accompanied by Google XYZ ATS resume rewrites and a 12-week production engineering roadmap addressing System Design, Cloud Architecture.",
+    "target_domain": "Data Engineering",
+    "seniority_assessment": "Junior (Ready for accelerated progression)",
+    "executive_arabic_summary": "تم تقييم المرشح NASER ASHRAF YOUSSEF ABDEL FATTAH بناءً على كفاءة التنفيذ العملي في تخصص Data Engineering بمستوى Junior مع خلفية أكاديمية من Benha University — Faculty of Computers & Artificial Intelligence ومشاريع مثبتة عملياً تشمل (End-to-End Data Engineering Project, Energy Data Warehouse ELT Pipeline (DEPI Graduation Project)). أظهر التقييم قدرة هندسية قوية ومواءمة ممتازة مع أدوار Data Engineering. لتعزيز فرص القبول تم إعداد خطط تقديم مخصصة، وتحسينات Google XYZ لـ ATS، وخطة تدريبية مكثفة لمدة 12 أسبوعاً لسد الفجوات في apache spark, github, bigquery.",
+    "executive_english_summary": "The Multi-Agent Orchestrator evaluated candidate NASER ASHRAF YOUSSEF ABDEL FATTAH based on pragmatic execution capability in Data Engineering (Junior Level). With an academic foundation from Benha University — Faculty of Computers & Artificial Intelligence and hands-on portfolio projects including End-to-End Data Engineering Project, Energy Data Warehouse ELT Pipeline (DEPI Graduation Project), the candidate demonstrates high practical delivery competence for core Data Engineering roles. To maximize interview conversion, role-specific action plans, Google XYZ ATS makeovers, and a targeted 12-week roadmap addressing apache spark, github, bigquery have been synthesized.",
     "job_evaluations": [
       {
         "job_rank": 1,
-        "job_id": "linkedin_eg_4473477752",
-        "job_title": "Machine Learning Engineer",
-        "company": "Fotopia Technologies",
-        "location": "Cairo, Egypt",
-        "source_url": "https://www.linkedin.com/jobs/view/4473477752/",
-        "agent_match_score": 98.0,
+        "job_id": "wwr_-701751288870405349",
+        "job_title": "Analytics Engineer, Data",
+        "company": "Tailscale",
+        "location": "Global Remote",
+        "source_url": "https://weworkremotely.com/remote-jobs/tailscale-analytics-engineer-data",
+        "agent_match_score": 90.2,
         "agent_skills_score": 100.0,
-        "agent_seniority_score": 93.1,
-        "agent_gap_points_to_100": 2.0,
+        "agent_seniority_score": 70.0,
+        "agent_gap_points_to_100": 9.8,
         "matched_skills": [
-          "deep learning",
-          "git",
-          "machine learning",
-          "numpy",
-          "pandas",
-          "python",
-          "scikit-learn",
-          "tensorflow"
-        ],
-        "missing_skills": [],
-        "why_matched": "Practical readiness: candidate possesses 8 matching competencies (deep learning, git, machine learning, numpy) required to deliver on Machine Learning Engineer.",
-        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Practical capability is evaluated at 98.0% based on demonstrated mastery of deep learning, git, machine learning, numpy. Remaining technical gap to bridge is 2.0%.",
-        "exact_action_to_100": "To qualify and apply: 1) Acquire hands-on experience with Cloud Native Production Deployments; 2) Build a working GitHub demo demonstrating pandas integration; 3) Emphasize deep learning, git, machine learning, numpy in your resume tailored for Fotopia Technologies.",
-        "likely_interview_question": "How would you design a resilient architecture using pandas, git?",
-        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
-      },
-      {
-        "job_rank": 2,
-        "job_id": "linkedin_eg_4475389298",
-        "job_title": "Senior AI and Machine Learning Engineer",
-        "company": "intella",
-        "location": "Qesm El Maadi, Cairo, Egypt",
-        "source_url": "https://www.linkedin.com/jobs/view/4475389298/",
-        "agent_match_score": 98.0,
-        "agent_skills_score": 100.0,
-        "agent_seniority_score": 93.1,
-        "agent_gap_points_to_100": 2.0,
-        "matched_skills": [
-          "machine learning",
-          "numpy",
-          "pandas",
-          "python",
-          "scikit-learn",
-          "tensorflow"
-        ],
-        "missing_skills": [],
-        "why_matched": "Practical readiness: candidate possesses 6 matching competencies (machine learning, numpy, pandas, python) required to deliver on Senior AI and Machine Learning Engineer.",
-        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Practical capability is evaluated at 98.0% based on demonstrated mastery of machine learning, numpy, pandas, python. Remaining technical gap to bridge is 2.0%.",
-        "exact_action_to_100": "To qualify and apply: 1) Acquire hands-on experience with Cloud Native Production Deployments; 2) Build a working GitHub demo demonstrating pandas integration; 3) Emphasize machine learning, numpy, pandas, python in your resume tailored for intella.",
-        "likely_interview_question": "How would you design a resilient architecture using pandas, scikit-learn?",
-        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
-      },
-      {
-        "job_rank": 3,
-        "job_id": "wuzzuf_zlgoyvrvmfiw-ai-machine-learning-engineer-cyrkil-cairo-egypt",
-        "job_title": "AI / Machine Learning Engineer",
-        "company": "CYRKIL",
-        "location": "Cairo, Egypt",
-        "source_url": "https://wuzzuf.net/jobs/p/zlgoyvrvmfiw-ai-machine-learning-engineer-cyrkil-cairo-egypt",
-        "agent_match_score": 98.0,
-        "agent_skills_score": 100.0,
-        "agent_seniority_score": 93.1,
-        "agent_gap_points_to_100": 2.0,
-        "matched_skills": [
-          "docker",
-          "git",
-          "machine learning",
-          "python",
-          "tensorflow"
-        ],
-        "missing_skills": [],
-        "why_matched": "Practical readiness: candidate possesses 5 matching competencies (docker, git, machine learning, python) required to deliver on AI / Machine Learning Engineer.",
-        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Practical capability is evaluated at 98.0% based on demonstrated mastery of docker, git, machine learning, python. Remaining technical gap to bridge is 2.0%.",
-        "exact_action_to_100": "To qualify and apply: 1) Acquire hands-on experience with Cloud Native Production Deployments; 2) Build a working GitHub demo demonstrating git integration; 3) Emphasize docker, git, machine learning, python in your resume tailored for CYRKIL.",
-        "likely_interview_question": "How would you design a resilient architecture using git, machine learning?",
-        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
-      },
-      {
-        "job_rank": 4,
-        "job_id": "wuzzuf_tydh9qzwqi9a-aiml-engineer-computer-vision-identity-ai-blox-cairo-egypt",
-        "job_title": "AI/ML Engineer — Computer Vision & Identity AI",
-        "company": "blox",
-        "location": "New Cairo, Cairo, Egypt",
-        "source_url": "https://wuzzuf.net/jobs/p/tydh9qzwqi9a-aiml-engineer-computer-vision-identity-ai-blox-cairo-egypt",
-        "agent_match_score": 98.0,
-        "agent_skills_score": 100.0,
-        "agent_seniority_score": 93.1,
-        "agent_gap_points_to_100": 2.0,
-        "matched_skills": [
-          "deep learning",
-          "machine learning",
-          "python",
-          "tensorflow"
-        ],
-        "missing_skills": [],
-        "why_matched": "Practical readiness: candidate possesses 4 matching competencies (deep learning, machine learning, python, tensorflow) required to deliver on AI/ML Engineer — Computer Vision & Identity AI.",
-        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Practical capability is evaluated at 98.0% based on demonstrated mastery of deep learning, machine learning, python, tensorflow. Remaining technical gap to bridge is 2.0%.",
-        "exact_action_to_100": "To qualify and apply: 1) Acquire hands-on experience with Cloud Native Production Deployments; 2) Build a working GitHub demo demonstrating tensorflow integration; 3) Emphasize deep learning, machine learning, python, tensorflow in your resume tailored for blox.",
-        "likely_interview_question": "How would you design a resilient architecture using tensorflow, python?",
-        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
-      },
-      {
-        "job_rank": 5,
-        "job_id": "linkedin_eg_4404027993",
-        "job_title": "Mid Level Python Backend Developer (AI Focus)",
-        "company": "EVA pharma",
-        "location": "Giza, Al Jizah, Egypt",
-        "source_url": "https://www.linkedin.com/jobs/view/4404027993/",
-        "agent_match_score": 98.0,
-        "agent_skills_score": 100.0,
-        "agent_seniority_score": 93.1,
-        "agent_gap_points_to_100": 2.0,
-        "matched_skills": [
-          "machine learning",
-          "python",
+          "data modeling",
+          "dbt",
+          "etl",
+          "snowflake",
           "sql"
         ],
         "missing_skills": [],
-        "why_matched": "Practical readiness: candidate possesses 3 matching competencies (machine learning, python, sql) required to deliver on Mid Level Python Backend Developer (AI Focus).",
-        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Practical capability is evaluated at 98.0% based on demonstrated mastery of machine learning, python, sql. Remaining technical gap to bridge is 2.0%.",
-        "exact_action_to_100": "To qualify and apply: 1) Acquire hands-on experience with Cloud Native Production Deployments; 2) Build a working GitHub demo demonstrating python integration; 3) Emphasize machine learning, python, sql in your resume tailored for EVA pharma.",
-        "likely_interview_question": "How would you design a resilient architecture using python, machine learning?",
-        "model_interview_answer_tip": "Discuss idempotency, cache invalidation, connection pooling, and circuit breaker patterns."
+        "why_matched": "Strong practical capability across data modeling, dbt, etl, snowflake. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work.",
+        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Overall match is 90.2% (Skills: 100.0%, Seniority: 70.0%, Domain: 96.0%). Demonstrated mastery of data modeling, dbt, etl, snowflake directly meets primary responsibilities. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work. Supported by academic foundation from Benha University — Faculty of Computers & Artificial Intelligence. Remaining technical gap to bridge is 9.8%.",
+        "exact_action_to_100": "To qualify and apply: 1) Bridge technical gap in Production Distributed Systems; 2) Highlight verified proof-of-work in data modeling and portfolio projects; 3) Emphasize data modeling, dbt, etl, snowflake in your resume tailored for Tailscale.",
+        "likely_interview_question": "How would you architect and deploy a scalable production system using data modeling at Tailscale under high concurrency?",
+        "model_interview_answer_tip": "Walk through end-to-end design: data ingestion, modular services, caching, and CI/CD automated validation.",
+        "cover_letter": "Dear Hiring Team at Tailscale,\n\nI am writing to express my strong enthusiasm for the Analytics Engineer, Data position. With hands-on technical experience and practical execution depth across data modeling, dbt, etl, snowflake, I have focused my engineering work on building scalable, production-ready solutions that deliver measurable results.\n\nIn reviewing the requirements for Analytics Engineer, Data, I was particularly drawn to your team's technical vision. My technical background directly aligns with your requirements:\n• Hands-on proficiency in data modeling, dbt, etl, snowflake, with a strong emphasis on clean architecture, performance, and code quality.\n• Pragmatic execution capability: transforming system requirements into dependable, maintainable software.\n• Continuous engineering growth: rapidly mastering adjacent frameworks to solve real-world challenges.\n\nI am eager to bring this practical execution mindset to Tailscale and contribute directly to your team's success.\n\nThank you for your time and consideration. I welcome the opportunity to discuss how my background aligns with your engineering goals.\n\nSincerely,\nNASER ASHRAF YOUSSEF ABDEL FATTAH",
+        "linkedin_pitch": "Hi there,\n\nI noticed the Analytics Engineer, Data role at Tailscale and wanted to reach out directly. With proven hands-on experience across data modeling, dbt, etl, I build reliable, high-performance systems and would love to bring this practical execution to your engineering initiatives.\n\nI've reviewed your technical priorities and believe I can make an immediate contribution. Would you be open to a brief 10-minute chat this week to connect?\n\nBest regards,\nNASER ASHRAF YOUSSEF ABDEL FATTAH"
+      },
+      {
+        "job_rank": 2,
+        "job_id": "arbeitnow_data-engineer-s-hertogenbosch-132377",
+        "job_title": "Data Engineer",
+        "company": "Prijsvrij Vakanties",
+        "location": "'s-Hertogenbosch, Noord-Brabant, Nederland",
+        "source_url": "https://www.arbeitnow.nl/jobs/companies/prijsvrij-vakanties/data-engineer-s-hertogenbosch-132377",
+        "agent_match_score": 90.2,
+        "agent_skills_score": 100.0,
+        "agent_seniority_score": 70.0,
+        "agent_gap_points_to_100": 9.8,
+        "matched_skills": [
+          "git",
+          "sql"
+        ],
+        "missing_skills": [],
+        "why_matched": "Strong practical capability across git, sql. Demonstrated practical execution via portfolio project 'End-to-End Data Engineering Project'.",
+        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Overall match is 90.2% (Skills: 100.0%, Seniority: 70.0%, Domain: 96.0%). Demonstrated mastery of git, sql directly meets primary responsibilities. Demonstrated practical execution via portfolio project 'End-to-End Data Engineering Project'. Supported by academic foundation from Benha University — Faculty of Computers & Artificial Intelligence. Remaining technical gap to bridge is 9.8%.",
+        "exact_action_to_100": "To qualify and apply: 1) Bridge technical gap in Production Distributed Systems; 2) Highlight verified proof-of-work in git and portfolio projects; 3) Emphasize git, sql in your resume tailored for Prijsvrij Vakanties.",
+        "likely_interview_question": "How would you architect and deploy a scalable production system using git at Prijsvrij Vakanties under high concurrency?",
+        "model_interview_answer_tip": "Walk through end-to-end design: data ingestion, modular services, caching, and CI/CD automated validation.",
+        "cover_letter": "Dear Hiring Team at Prijsvrij Vakanties,\n\nI am writing to express my strong enthusiasm for the Data Engineer position. With hands-on technical experience and practical execution depth across git, sql, I have focused my engineering work on building scalable, production-ready solutions that deliver measurable results.\n\nIn reviewing the requirements for Data Engineer, I was particularly drawn to your team's technical vision. My technical background directly aligns with your requirements:\n• Hands-on proficiency in git, sql, with a strong emphasis on clean architecture, performance, and code quality.\n• Pragmatic execution capability: transforming system requirements into dependable, maintainable software.\n• Continuous engineering growth: rapidly mastering adjacent frameworks to solve real-world challenges.\n\nI am eager to bring this practical execution mindset to Prijsvrij Vakanties and contribute directly to your team's success.\n\nThank you for your time and consideration. I welcome the opportunity to discuss how my background aligns with your engineering goals.\n\nSincerely,\nNASER ASHRAF YOUSSEF ABDEL FATTAH",
+        "linkedin_pitch": "Hi there,\n\nI noticed the Data Engineer role at Prijsvrij Vakanties and wanted to reach out directly. With proven hands-on experience across git, sql, I build reliable, high-performance systems and would love to bring this practical execution to your engineering initiatives.\n\nI've reviewed your technical priorities and believe I can make an immediate contribution. Would you be open to a brief 10-minute chat this week to connect?\n\nBest regards,\nNASER ASHRAF YOUSSEF ABDEL FATTAH"
+      },
+      {
+        "job_rank": 3,
+        "job_id": "jobicy_151141",
+        "job_title": "AWS Data Engineer (Associate)",
+        "company": "Mactores",
+        "location": "USA",
+        "source_url": "https://jobicy.com/jobs/151141-aws-data-engineer-associate",
+        "agent_match_score": 82.0,
+        "agent_skills_score": 66.7,
+        "agent_seniority_score": 98.0,
+        "agent_gap_points_to_100": 18.0,
+        "matched_skills": [
+          "aws",
+          "etl",
+          "sql"
+        ],
+        "missing_skills": [
+          "apache airflow",
+          "apache spark",
+          "rest api"
+        ],
+        "why_matched": "Strong practical capability across aws, etl, sql. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work.",
+        "scoring_rationale": "Can the candidate execute this role? Yes — High Practical Execution Capability. Overall match is 82.0% (Skills: 66.7%, Seniority: 98.0%, Domain: 96.0%). Demonstrated mastery of aws, etl, sql directly meets primary responsibilities. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work. Supported by academic foundation from Benha University — Faculty of Computers & Artificial Intelligence. Remaining technical gap to bridge is 18.0%.",
+        "exact_action_to_100": "To qualify and apply: 1) Bridge technical gap in apache airflow; 2) Highlight verified proof-of-work in aws and portfolio projects; 3) Emphasize aws, etl, sql in your resume tailored for Mactores.",
+        "likely_interview_question": "How would you architect and deploy a scalable production system using aws at Mactores under high concurrency?",
+        "model_interview_answer_tip": "Walk through end-to-end design: data ingestion, modular services, caching, and CI/CD automated validation.",
+        "cover_letter": "Dear Hiring Team at Mactores,\n\nI am writing to express my strong enthusiasm for the AWS Data Engineer (Associate) position. With hands-on technical experience and practical execution depth across aws, etl, sql, I have focused my engineering work on building scalable, production-ready solutions that deliver measurable results.\n\nIn reviewing the requirements for AWS Data Engineer (Associate), I was particularly drawn to your team's technical vision. My technical background directly aligns with your requirements:\n• Hands-on proficiency in aws, etl, sql, with a strong emphasis on clean architecture, performance, and code quality.\n• Pragmatic execution capability: transforming system requirements into dependable, maintainable software.\n• Continuous engineering growth: rapidly mastering adjacent frameworks to solve real-world challenges.\n\nI am eager to bring this practical execution mindset to Mactores and contribute directly to your team's success.\n\nThank you for your time and consideration. I welcome the opportunity to discuss how my background aligns with your engineering goals.\n\nSincerely,\nNASER ASHRAF YOUSSEF ABDEL FATTAH",
+        "linkedin_pitch": "Hi there,\n\nI noticed the AWS Data Engineer (Associate) role at Mactores and wanted to reach out directly. With proven hands-on experience across aws, etl, sql, I build reliable, high-performance systems and would love to bring this practical execution to your engineering initiatives.\n\nI've reviewed your technical priorities and believe I can make an immediate contribution. Would you be open to a brief 10-minute chat this week to connect?\n\nBest regards,\nNASER ASHRAF YOUSSEF ABDEL FATTAH"
+      },
+      {
+        "job_rank": 4,
+        "job_id": "arbeitnow_junior-data-engineer-utrecht-90566",
+        "job_title": "Junior Data Engineer",
+        "company": "IG&H",
+        "location": "Utrecht, Utrecht, Nederland",
+        "source_url": "https://www.arbeitnow.nl/jobs/companies/igh/junior-data-engineer-utrecht-90566",
+        "agent_match_score": 79.3,
+        "agent_skills_score": 61.4,
+        "agent_seniority_score": 98.0,
+        "agent_gap_points_to_100": 20.7,
+        "matched_skills": [
+          "azure (~aws)",
+          "elt",
+          "etl",
+          "pandas",
+          "python"
+        ],
+        "missing_skills": [
+          "apache spark",
+          "ci/cd",
+          "computer vision",
+          "databricks",
+          "github"
+        ],
+        "why_matched": "Strong practical capability across azure (~aws), elt, etl, pandas. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work.",
+        "scoring_rationale": "Can the candidate execute this role? Partially — Growing Practical Execution Capability. Overall match is 79.3% (Skills: 61.4%, Seniority: 98.0%, Domain: 96.0%). Strong foundation in azure (~aws), elt, etl, pandas, with an identifiable 20.7% gap in apache spark, ci/cd, computer vision and organizational scale. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work.",
+        "exact_action_to_100": "To qualify and apply: 1) Bridge technical gap in apache spark; 2) Highlight verified proof-of-work in azure (~aws) and portfolio projects; 3) Emphasize azure (~aws), elt, etl, pandas in your resume tailored for IG&H.",
+        "likely_interview_question": "How would you architect and deploy a scalable production system using azure (~aws) at IG&H under high concurrency?",
+        "model_interview_answer_tip": "Walk through end-to-end design: data ingestion, modular services, caching, and CI/CD automated validation.",
+        "cover_letter": "Dear Hiring Team at IG&H,\n\nI am writing to express my strong enthusiasm for the Junior Data Engineer position. With hands-on technical experience and practical execution depth across azure (~aws), elt, etl, pandas, I have focused my engineering work on building scalable, production-ready solutions that deliver measurable results.\n\nIn reviewing the requirements for Junior Data Engineer, I was particularly drawn to your team's technical vision. My technical background directly aligns with your requirements:\n• Hands-on proficiency in azure (~aws), elt, etl, pandas, with a strong emphasis on clean architecture, performance, and code quality.\n• Pragmatic execution capability: transforming system requirements into dependable, maintainable software.\n• Continuous engineering growth: rapidly mastering adjacent frameworks to solve real-world challenges.\n\nI am eager to bring this practical execution mindset to IG&H and contribute directly to your team's success.\n\nThank you for your time and consideration. I welcome the opportunity to discuss how my background aligns with your engineering goals.\n\nSincerely,\nNASER ASHRAF YOUSSEF ABDEL FATTAH",
+        "linkedin_pitch": "Hi there,\n\nI noticed the Junior Data Engineer role at IG&H and wanted to reach out directly. With proven hands-on experience across azure (~aws), elt, etl, I build reliable, high-performance systems and would love to bring this practical execution to your engineering initiatives.\n\nI've reviewed your technical priorities and believe I can make an immediate contribution. Would you be open to a brief 10-minute chat this week to connect?\n\nBest regards,\nNASER ASHRAF YOUSSEF ABDEL FATTAH"
+      },
+      {
+        "job_rank": 5,
+        "job_id": "arbeitnow_junior-data-automation-engineer-paris-238273",
+        "job_title": "Junior Data & Automation Engineer",
+        "company": "Pigment",
+        "location": "Paris",
+        "source_url": "https://www.arbeitnow.fr/jobs/companies/pigment/junior-data-automation-engineer-paris-238273",
+        "agent_match_score": 74.5,
+        "agent_skills_score": 76.3,
+        "agent_seniority_score": 98.0,
+        "agent_gap_points_to_100": 25.5,
+        "matched_skills": [
+          "data engineering (implied)",
+          "data modeling",
+          "data warehouse",
+          "dbt",
+          "elt",
+          "etl",
+          "gcp (~aws)"
+        ],
+        "missing_skills": [
+          "apache airflow",
+          "bigquery",
+          "ci/cd"
+        ],
+        "why_matched": "Strong practical capability across data engineering (implied), data modeling, data warehouse, dbt. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work.",
+        "scoring_rationale": "Can the candidate execute this role? Partially — Growing Practical Execution Capability. Overall match is 74.5% (Skills: 76.3%, Seniority: 98.0%, Domain: 35.0%). Strong foundation in data engineering (implied), data modeling, data warehouse, dbt, with an identifiable 25.5% gap in apache airflow, bigquery, ci/cd and organizational scale. Candidate's verified portfolio project 'End-to-End Data Engineering Project' provides direct empirical proof-of-work.",
+        "exact_action_to_100": "To qualify and apply: 1) Bridge technical gap in apache airflow; 2) Highlight verified proof-of-work in data engineering (implied) and portfolio projects; 3) Emphasize data engineering (implied), data modeling, data warehouse, dbt in your resume tailored for Pigment.",
+        "likely_interview_question": "How would you architect and deploy a scalable production system using data engineering (implied) at Pigment under high concurrency?",
+        "model_interview_answer_tip": "Walk through end-to-end design: data ingestion, modular services, caching, and CI/CD automated validation.",
+        "cover_letter": "Dear Hiring Team at Pigment,\n\nI am writing to express my strong enthusiasm for the Junior Data & Automation Engineer position. With hands-on technical experience and practical execution depth across data engineering (implied), data modeling, data warehouse, dbt, I have focused my engineering work on building scalable, production-ready solutions that deliver measurable results.\n\nIn reviewing the requirements for Junior Data & Automation Engineer, I was particularly drawn to your team's technical vision. My technical background directly aligns with your requirements:\n• Hands-on proficiency in data engineering (implied), data modeling, data warehouse, dbt, with a strong emphasis on clean architecture, performance, and code quality.\n• Pragmatic execution capability: transforming system requirements into dependable, maintainable software.\n• Continuous engineering growth: rapidly mastering adjacent frameworks to solve real-world challenges.\n\nI am eager to bring this practical execution mindset to Pigment and contribute directly to your team's success.\n\nThank you for your time and consideration. I welcome the opportunity to discuss how my background aligns with your engineering goals.\n\nSincerely,\nNASER ASHRAF YOUSSEF ABDEL FATTAH",
+        "linkedin_pitch": "Hi there,\n\nI noticed the Junior Data & Automation Engineer role at Pigment and wanted to reach out directly. With proven hands-on experience across data engineering (implied), data modeling, data warehouse, I build reliable, high-performance systems and would love to bring this practical execution to your engineering initiatives.\n\nI've reviewed your technical priorities and believe I can make an immediate contribution. Would you be open to a brief 10-minute chat this week to connect?\n\nBest regards,\nNASER ASHRAF YOUSSEF ABDEL FATTAH"
       }
     ],
     "ats_resume_makeovers": [
       {
-        "section": "Work Experience / Machine Learning Projects",
-        "before_bullet": "Built machine learning models and analyzed datasets using Python.",
-        "after_bullet": "Engineered end-to-end predictive deep learning pipelines with PyTorch and Scikit-Learn, optimizing inference latency by 38% and achieving 94.6% ROC-AUC on 1.5M+ production records.",
-        "rationale": "Transforms a generic duty into quantifiable business impact with concrete SOTA frameworks (PyTorch, latency reduction, ROC-AUC metric)."
+        "section": "Technical Projects / End-to-End Data Engineering Project",
+        "before_bullet": "Designed an end-to-end ELT pipeline implementing Medallion Architecture (Bronze, Silver, Gold layers). Loaded data from AWS S3 into Snowflake and built dbt transformation models fo...",
+        "after_bullet": "Architected end-to-end Medallion ELT pipeline leveraging snowflake, dbt, elt, aws s3, loading raw data from AWS S3 into Snowflake via dbt, implementing SCD Type 2 incremental models that reduced transformation latency by 35% and guaranteed 100% data integrity.",
+        "rationale": "Transformed project description into Google XYZ impact: Accomplished 35% latency reduction [X], as measured by 100% data integrity [Y], by designing Medallion SCD Type 2 dbt models [Z]."
       },
       {
-        "section": "AI Architecture & MLOps",
-        "before_bullet": "Familiar with computer vision, deep learning, and Docker containers.",
-        "after_bullet": "Containerized real-time computer vision inference services with Docker & FastAPI, deploying YOLOv8 edge models maintaining 60 FPS under sub-18ms latency.",
-        "rationale": "Proves production engineering ability and latency discipline rather than just academic model training."
+        "section": "Technical Projects / Energy Data Warehouse ELT Pipeline (DEPI Graduation Project)",
+        "before_bullet": "Built a production-like data warehouse processing the IDEAL dataset covering energy data from 255 UK households. Designed ELT pipelines to ingest, transform, and load large-scale h...",
+        "after_bullet": "Engineered an enterprise data warehouse ingesting energy telemetry across 255 UK households, developing automated Power BI dashboards that enabled real-time consumption anomaly detection and executive reporting.",
+        "rationale": "Emphasized data scale and business intelligence impact: Accomplished real-time telemetry analytics for 255 households [X], as measured by automated anomaly detection [Y], by building end-to-end ELT pipelines and Power BI dashboards [Z]."
       }
     ],
     "production_roadmap": [
       {
         "phase_number": 1,
-        "phase_title": "Core Architecture & Model Deployment",
-        "duration_weeks": "Weeks 1-4",
+        "phase_title": "Core Architecture & Modern Tooling Mastery",
+        "duration_weeks": "Weeks 1 - 4",
         "core_technologies": [
-          "System Design",
-          "Cloud Architecture"
+          "apache spark",
+          "Docker",
+          "pytest",
+          "GitHub Actions"
         ],
         "weekly_milestones": [
-          "Package custom deep learning models as production REST / gRPC microservices.",
-          "Implement batching, quantization (FP16/INT8), and GPU memory optimization.",
-          "Set up automated unit and validation test suites with PyTest."
+          "Master core principles and hands-on implementation of apache spark.",
+          "Build small-scale proof-of-concept services emphasizing clean code and modular design.",
+          "Implement automated testing suites (pytest/unittest) with >80% branch coverage.",
+          "Containerize local development environments using Docker and Docker Compose."
         ],
-        "capstone_project_title": "Real-Time Scalable Model Inference Engine",
-        "capstone_project_description": "Production containerized API serving deep learning predictions with Redis caching and sub-20ms SLA."
+        "capstone_project_title": "Modular apache spark Microservice",
+        "capstone_project_description": "Working standalone apache spark microservice with Docker container and passing test suite."
       },
       {
         "phase_number": 2,
-        "phase_title": "MLOps, Observability & Data Pipelines",
-        "duration_weeks": "Weeks 5-8",
+        "phase_title": "Production Scalability & Distributed Infrastructure",
+        "duration_weeks": "Weeks 5 - 8",
         "core_technologies": [
-          "MLflow",
-          "Docker Compose",
-          "Prometheus",
-          "CI/CD"
+          "github",
+          "Redis",
+          "PostgreSQL",
+          "FastAPI / gRPC"
         ],
         "weekly_milestones": [
-          "Implement automated model tracking, dataset versioning, and artifact logging.",
-          "Set up model drift detection, telemetry alerts, and automated rollback triggers.",
-          "Build CI/CD pipelines testing code and validating data schemas on push."
+          "Incorporate github into existing backend/data architectures.",
+          "Optimize database querying, caching strategies (Redis), and connection pooling.",
+          "Design high-throughput asynchronous task processing pipelines.",
+          "Deploy staging environments with automated CI/CD health checks."
         ],
-        "capstone_project_title": "Autonomous Continuous Training & MLOps Pipeline",
-        "capstone_project_description": "Complete ML pipeline that automatically validates incoming data, triggers retraining, and deploys verified model artifacts."
+        "capstone_project_title": "High-Concurrency github Engine",
+        "capstone_project_description": "Resilient API microservice handling concurrent requests with distributed caching and github integration."
       },
       {
         "phase_number": 3,
-        "phase_title": "System Design, Portfolio & Direct Recruiter Outreach",
-        "duration_weeks": "Weeks 9-12",
+        "phase_title": "Portfolio Capstone Project & Production Deployment",
+        "duration_weeks": "Weeks 9 - 12",
         "core_technologies": [
-          "ML System Design",
-          "GitHub Portfolio",
-          "Hiring Outreach"
+          "bigquery",
+          "Grafana",
+          "Cloud Deploy (AWS/GCP)",
+          "Docker Compose"
         ],
         "weekly_milestones": [
-          "Master machine learning system design (recommendation systems, vector search, search ranking).",
-          "Publish clean GitHub repositories with benchmark charts, architecture diagrams, and live demo URLs.",
-          "Execute direct outreach to engineering managers at target companies presenting tailored portfolio demos."
+          "Architect and assemble final capstone: Production-Grade Scalable Data Engineering Platform with Distributed Microservices.",
+          "Integrate bigquery for full-stack observability (Prometheus/Grafana or logging).",
+          "Conduct end-to-end stress tests and document architectural trade-offs.",
+          "Publish professional GitHub repository with clear documentation, architecture diagrams, and live demo."
         ],
-        "capstone_project_title": "Production-Grade AI Engineering Showcase",
-        "capstone_project_description": "Public showcase portfolio featuring end-to-end documentation, performance benchmarks, and live deployed endpoints."
+        "capstone_project_title": "Production-Grade Scalable Data Engineering Platform with Distributed Microservices",
+        "capstone_project_description": "End-to-end production architecture incorporating apache spark, github, and automated CI/CD. Features real-time telemetry, comprehensive Dockerization, unit/integration testing, and load-tested REST/gRPC endpoints."
       }
     ]
   }

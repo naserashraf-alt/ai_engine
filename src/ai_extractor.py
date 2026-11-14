@@ -1,23 +1,24 @@
 """
 =============================================================================
-src/ai_extractor.py - مستخرج السير الذاتية بالذكاء الاصطناعي (AI CV Extractor)
+src/ai_extractor.py - AI Resume Extractor with Verified Tenure & Careerk Export
 =============================================================================
 
-الغرض (Purpose):
-- تحليل وتفكيك السير الذاتية (PDFs) واستخراج بيانات المرشح كاملة دون أخطاء أو هلاوس.
-- يدعم مزودين متعددين:
-  1. Google Gemini (Gemini 2.5 Pro, 2.0 Pro, 2.0 Flash) عبر google-genai الحديث.
-  2. OpenAI (GPT-4o, o3-mini).
-  3. نماذج محلية عبر Ollama (llama3.3, deepseek-r1).
-  4. محرك Heuristic ذكي يعمل أوفلاين في حال عدم توفر اتصال أو مفتاح API.
+Purpose:
+- Parses and extracts structured candidate data from PDF/DOCX resumes.
+- Features multimodal OCR fallback for scanned image documents.
+- Calculates verified employment tenure from chronological dates.
+- Normalizes technical skills using the Semantic Skill Ontology.
+- Generates 100% compliant Careerk backend payload (NlpParseCvResponse).
 
-المدخلات والمخرجات (Inputs / Outputs):
-- المدخل: مسار ملف الـ PDF.
-- المخرج: كائن Pydantic من نوع `ResumeProfile` مفصل ومتحقق منه.
+Supported AI Providers:
+1. Google Gemini (Gemini 2.5 Pro, 2.0 Flash) via modern google-genai SDK.
+2. OpenAI (GPT-4o, o3-mini).
+3. Local LLMs via Ollama (llama3.2, deepseek-r1).
+4. Offline Smart Heuristic Fallback engine.
 
-الاتصالات والتبعيات (Dependencies & Connections):
-- يستدعي: src/pdf_reader.py, src/schemas.py
-- يُستورد في: app.py, run_agent.py, extract_cv.py
+Dependencies:
+- Calls: src/pdf_reader.py, src/schemas.py, src/skills_ontology.py
+- Imported in: src/api_server.py, app.py, run_agent.py, extract_cv.py
 =============================================================================
 """
 
@@ -38,8 +39,10 @@ load_dotenv()
 
 from src.schemas import (
     ResumeProfile, PersonalInfo, ExperienceItem, EducationItem,
-    ProjectItem, CertificationItem, LanguageItem, SkillsCategorized
+    ProjectItem, CertificationItem, LanguageItem, SkillsCategorized,
+    calculate_tenure_from_experiences
 )
+from src.skills_ontology import SkillOntology
 from src.pdf_reader import PDFReader
 
 # Check modern Google GenAI SDK
@@ -132,6 +135,12 @@ class AIExtractor:
         # 1. Read document using Universal Document Reader (PDF / DOCX)
         meta = PDFReader.extract_text_and_meta(pdf_path)
         cleaned_text = meta["cleaned_text"]
+
+        # Automatic Scanned Document OCR Detection
+        is_scanned_image = len(cleaned_text.split()) < 30 and pdf_path.lower().endswith(".pdf")
+        if is_scanned_image:
+            prefer_multimodal = True
+            meta["is_scanned_document"] = True
 
         profile: Optional[ResumeProfile] = None
         used_provider = self.provider
@@ -310,6 +319,15 @@ class AIExtractor:
                 full_name = line.strip()
                 break
 
+        # 1.1 Candidate Target Role Headline (Line right below name)
+        candidate_headline = ""
+        for line in lines[1:6]:
+            if line == full_name or '@' in line or '+' in line or 'linkedin' in line.lower() or 'github' in line.lower():
+                continue
+            if re.search(r'\b(data engineer|machine learning engineer|ai engineer|data scientist|data analyst|backend developer|frontend developer|full stack developer|software engineer|cloud engineer|devops engineer|mobile developer)\b', line, re.IGNORECASE):
+                candidate_headline = line.strip()
+                break
+
         # 2. Email
         email_match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
         email = email_match.group(0) if email_match else None
@@ -327,85 +345,194 @@ class AIExtractor:
         if github:
             links['github'] = github.group(0)
 
-        # 5. Extract Years of Experience
+        # 5. Extract Technical Skills dictionary scan
+        common_tech = [
+            "python", "javascript", "typescript", "java", "c++", "c#", "go", "rust", "php",
+            "react", "angular", "vue", "next.js", "node.js", "express", "django", "fastapi", "flask", "spring boot",
+            "sql", "postgresql", "mysql", "mongodb", "redis", "elasticsearch",
+            "snowflake", "dbt", "etl", "elt", "data warehouse", "data warehousing", "data modeling", "power bi", "bigquery", "spark", "pyspark", "hadoop", "airflow", "kafka", "aws s3",
+            "docker", "kubernetes", "aws", "gcp", "azure", "git", "linux", "ci/cd", "terraform",
+            "pytorch", "tensorflow", "scikit-learn", "pandas", "numpy", "matplotlib", "machine learning", "deep learning", "nlp", "llm"
+        ]
+        text_lower = text.lower()
+        found_tech = [t for t in common_tech if re.search(r'\b' + re.escape(t) + r'\b', text_lower)]
+
+        # 6. Determine Primary Domain (Priority to Explicit Headline)
+        primary_domain = "Software Engineering"
+        hl_lower = candidate_headline.lower()
+        if "data engineer" in hl_lower:
+            primary_domain = "Data Engineering"
+        elif "data scientist" in hl_lower or "data analyst" in hl_lower:
+            primary_domain = "Data Science"
+        elif "machine learning" in hl_lower or "ai engineer" in hl_lower:
+            primary_domain = "AI / Machine Learning"
+        elif "backend" in hl_lower:
+            primary_domain = "Backend Engineering"
+        elif "frontend" in hl_lower:
+            primary_domain = "Frontend Engineering"
+        elif "full stack" in hl_lower:
+            primary_domain = "Full Stack Engineering"
+        elif "devops" in hl_lower or "cloud" in hl_lower:
+            primary_domain = "DevOps / Cloud Engineering"
+        else:
+            # Fallback by skill density
+            if any(k in found_tech for k in ["snowflake", "dbt", "etl", "elt", "data warehouse", "data modeling"]):
+                primary_domain = "Data Engineering"
+            elif any(k in found_tech for k in ["pytorch", "tensorflow", "nlp", "llm"]):
+                primary_domain = "AI / Machine Learning"
+            elif any(k in found_tech for k in ["react", "angular", "vue", "next.js", "typescript"]):
+                if any(k in found_tech for k in ["node.js", "django", "fastapi", "postgresql", "mongodb"]):
+                    primary_domain = "Full Stack Engineering"
+                else:
+                    primary_domain = "Frontend Engineering"
+            elif any(k in found_tech for k in ["docker", "kubernetes", "aws", "terraform"]):
+                primary_domain = "DevOps / Cloud Engineering"
+            elif any(k in found_tech for k in ["django", "fastapi", "flask", "spring boot", "postgresql"]):
+                primary_domain = "Backend Engineering"
+
+        # 7. Extract Years of Experience & Seniority
         exp_matches = re.findall(r'(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)\b', text, re.IGNORECASE)
         years_exp = 1.0
         if exp_matches:
             valid_years = [float(y) for y in exp_matches if float(y) <= 35]
             if valid_years:
-                years_exp = max(valid_years)
+                years_exp = min(valid_years)  # Prefer lower baseline for junior/trainee profiles
 
-        # Seniority estimation
-        seniority = "Junior"
-        if years_exp >= 8:
+        is_explicit_junior = bool(re.search(r'\b(junior|jr\.?|entry|intern|trainee|fresh|aspiring)\b', candidate_headline or text[:400], re.IGNORECASE))
+        if is_explicit_junior:
+            seniority = "Junior"
+            years_exp = min(years_exp, 1.5)
+        elif years_exp >= 8:
             seniority = "Senior / Lead"
         elif years_exp >= 5:
             seniority = "Senior"
-        elif years_exp >= 2:
+        elif years_exp >= 2.5:
             seniority = "Mid-Level"
+        else:
+            seniority = "Junior"
 
-        # 6. Technical Skills dictionary scan
-        common_tech = [
-            "python", "javascript", "typescript", "java", "c++", "c#", "go", "rust", "php",
-            "react", "angular", "vue", "next.js", "node.js", "express", "django", "fastapi", "flask", "spring boot",
-            "sql", "postgresql", "mysql", "mongodb", "redis", "elasticsearch",
-            "docker", "kubernetes", "aws", "gcp", "azure", "git", "linux", "ci/cd", "terraform",
-            "pytorch", "tensorflow", "scikit-learn", "pandas", "numpy", "machine learning", "deep learning", "nlp", "llm"
-        ]
-        text_lower = text.lower()
-        found_tech = [t for t in common_tech if re.search(r'\b' + re.escape(t) + r'\b', text_lower)]
+        headline = candidate_headline if candidate_headline else f"{seniority} {primary_domain}"
 
-        # Determine primary domain
-        primary_domain = "Software Engineering"
-        if any(k in found_tech for k in ["pytorch", "tensorflow", "machine learning", "deep learning", "nlp", "llm"]):
-            primary_domain = "AI / Machine Learning"
-        elif any(k in found_tech for k in ["react", "angular", "vue", "next.js", "typescript"]):
-            if any(k in found_tech for k in ["node.js", "django", "fastapi", "postgresql", "mongodb"]):
-                primary_domain = "Full Stack Engineering"
+        # 8. Deep Section-by-Section Parsing for Real Resume Understanding
+        sections = {}
+        current_sec = 'HEADER'
+        lines_raw = text.split('\n')
+        header_pattern = re.compile(
+            r'^(PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EDUCATION|PROFESSIONAL EXPERIENCE|EXPERIENCE|WORK EXPERIENCE|INTERNSHIPS & TRAINING|TRAINING & INTERNSHIPS|TRAINING|TECHNICAL SKILLS|SKILLS|PROJECTS|KEY PROJECTS|CERTIFICATIONS & LANGUAGES|CERTIFICATIONS|LANGUAGES)\s*$',
+            re.IGNORECASE
+        )
+
+        buf = []
+        for line_r in lines_raw:
+            l_str = line_r.strip()
+            if header_pattern.match(l_str):
+                sections[current_sec] = '\n'.join(buf).strip()
+                current_sec = l_str.upper()
+                buf = []
             else:
-                primary_domain = "Frontend Engineering"
-        elif any(k in found_tech for k in ["docker", "kubernetes", "aws", "terraform"]):
-            primary_domain = "DevOps / Cloud Engineering"
-        elif any(k in found_tech for k in ["django", "fastapi", "flask", "spring boot", "postgresql"]):
-            primary_domain = "Backend Engineering"
+                buf.append(l_str)
+        sections[current_sec] = '\n'.join(buf).strip()
 
-        # Construct fallback profile
+        # Summary
+        summary_text = sections.get('PROFESSIONAL SUMMARY') or sections.get('SUMMARY') or sections.get('PROFILE') or ""
+        if summary_text:
+            prof_summary = summary_text.replace('\n', ' ').strip()
+        else:
+            prof_summary = f"{seniority} {primary_domain} specializing in {', '.join(found_tech[:6])}."
+
+        # Education
+        edu_text = sections.get('EDUCATION', '')
+        edu_items = []
+        if edu_text:
+            edu_lines = [l.strip() for l in edu_text.split('\n') if l.strip()]
+            inst = edu_lines[0] if edu_lines else "University"
+            deg = edu_lines[1] if len(edu_lines) > 1 else "Bachelor of Science"
+            edu_items.append(EducationItem(
+                institution=inst,
+                degree=deg,
+                field_of_study="Computer Science or Related Field"
+            ))
+        else:
+            edu_items.append(EducationItem(
+                degree="Bachelor of Science",
+                field_of_study="Computer Science",
+                institution="Accredited University"
+            ))
+
+        # Experience & Internships
+        exp_combined = sections.get('PROFESSIONAL EXPERIENCE', '') + '\n\n' + sections.get('EXPERIENCE', '') + '\n\n' + sections.get('INTERNSHIPS & TRAINING', '') + '\n\n' + sections.get('TRAINING', '')
+        exp_items = []
+        exp_pattern = re.compile(
+            r'([A-Za-z0-9\s/]+)\s*[—–-]\s*([A-Za-z0-9\s\(\)]+)\n\s*([A-Za-z0-9\s–\-]+)\n((?:[-•\s\w\.,\(\)]+?)(?=\n[A-Za-z0-9\s/]+\s*[—–-]|\Z))',
+            re.DOTALL
+        )
+        for m in exp_pattern.finditer(exp_combined):
+            role = m.group(1).strip()
+            comp = m.group(2).strip()
+            dates = m.group(3).strip()
+            bullet_text = m.group(4).strip()
+            bullets = [b.strip().lstrip('-•* ') for b in bullet_text.split('\n') if len(b.strip()) > 5]
+            exp_items.append(ExperienceItem(
+                job_title=role,
+                company=comp,
+                start_date=dates,
+                is_current="present" in dates.lower(),
+                description=' '.join(bullets[:2]) if bullets else role,
+                key_achievements=bullets,
+                technologies_used=[t for t in found_tech if t in bullet_text.lower()][:6]
+            ))
+
+        if not exp_items:
+            exp_items.append(ExperienceItem(
+                job_title=headline,
+                company="Engineering Experience",
+                start_date="Recent",
+                is_current=True,
+                description="Designed and delivered technical software and data solutions.",
+                key_achievements=["Delivered production-grade features", "Engineered scalable solutions"],
+                technologies_used=found_tech[:6]
+            ))
+
+        # Projects
+        project_items = []
+        proj_text = sections.get('PROJECTS') or sections.get('KEY PROJECTS') or ""
+        if proj_text:
+            proj_blocks = re.split(r'\n(?=[A-Z][A-Za-z0-9\s\-\(\)]+\n\s*[-•])', proj_text)
+            for b in proj_blocks:
+                p_lines = [l.strip() for l in b.split('\n') if l.strip()]
+                if not p_lines:
+                    continue
+                p_title = p_lines[0]
+                p_bullets = [l.lstrip('-•* ') for l in p_lines[1:] if len(l.strip()) > 5]
+                b_text = ' '.join(p_bullets).lower()
+                inferred = [t for t in found_tech if t in b_text]
+                project_items.append(ProjectItem(
+                    title=p_title,
+                    description=' '.join(p_bullets) if p_bullets else p_title,
+                    technologies=inferred
+                ))
+
+        # Construct comprehensive profile
         return ResumeProfile(
             personal_info=PersonalInfo(
                 full_name=full_name,
-                headline=f"{seniority} {primary_domain}",
+                headline=headline,
                 email=email,
                 phone=phone,
                 links=links
             ),
-            professional_summary=f"Experienced {primary_domain} professional with skills in {', '.join(found_tech[:5])}.",
+            professional_summary=prof_summary,
             primary_domain=primary_domain,
             seniority_level=seniority,
             total_years_experience=years_exp,
             skills=SkillsCategorized(
-                technical_skills=found_tech[:15],
-                tools_and_platforms=["git", "docker", "linux"],
-                soft_skills=["Problem Solving", "Communication", "Teamwork"]
+                technical_skills=found_tech[:20],
+                tools_and_platforms=[t for t in found_tech if t in ["git", "github", "docker", "linux", "aws s3", "vs code", "power bi"]],
+                soft_skills=["Problem Solving", "Independent Learning", "Communication", "Team Collaboration"]
             ),
-            work_experience=[
-                ExperienceItem(
-                    job_title=f"{seniority} Engineer",
-                    company="Professional Technology Company",
-                    start_date="2022",
-                    end_date="Present",
-                    is_current=True,
-                    description="Designed, developed, and maintained core engineering solutions.",
-                    key_achievements=["Delivered high-performance features", "Optimized system efficiency"],
-                    technologies_used=found_tech[:6]
-                )
-            ],
-            education=[
-                EducationItem(
-                    degree="Bachelor of Science",
-                    field_of_study="Computer Science or Related Field",
-                    institution="Accredited University"
-                )
-            ],
+            work_experience=exp_items,
+            education=edu_items,
+            projects=project_items,
             languages=[
                 LanguageItem(language="English", proficiency="Professional"),
                 LanguageItem(language="Arabic", proficiency="Native")
@@ -425,22 +552,54 @@ class AIExtractor:
         elapsed_sec: float
     ) -> ResumeProfile:
         """
-        Creates deduplicated, lowercased flat skills list and enriches metadata.
+        Creates deduplicated, ontology-canonicalized flat skills list,
+        calculates verified tenure from work history dates, and enriches metadata.
         """
-        # Combine technical skills and tools into normalized_skills_flat
+        # 1. Canonicalize Technical Skills & Tools via Skills Ontology
         all_skills = set()
+        canonical_tech = []
         for s in profile.skills.technical_skills:
             clean = s.strip().lower()
             if clean:
-                all_skills.add(clean)
+                canonical = SkillOntology.canonicalize(clean)
+                all_skills.add(canonical)
+                canonical_tech.append(canonical)
+        profile.skills.technical_skills = sorted(list(set(canonical_tech)))
+
+        canonical_tools = []
         for s in profile.skills.tools_and_platforms:
             clean = s.strip().lower()
             if clean:
-                all_skills.add(clean)
+                canonical = SkillOntology.canonicalize(clean)
+                all_skills.add(canonical)
+                canonical_tools.append(canonical)
+        profile.skills.tools_and_platforms = sorted(list(set(canonical_tools)))
+
+        # Also expand candidate skills with high-confidence implied skills (e.g., PyTorch implies Python & Deep Learning)
+        expanded_map = SkillOntology.expand_candidate_skills(list(all_skills))
+        for implied_skill, confidence in expanded_map.items():
+            if confidence >= 0.95:  # Only strict direct implications
+                all_skills.add(implied_skill)
 
         profile.normalized_skills_flat = sorted(list(all_skills))
 
-        # Enrich metadata
+        # 2. Verified Date & Tenure Calculation
+        verified_tenure = calculate_tenure_from_experiences(profile.work_experience)
+        if verified_tenure > 0.0:
+            if profile.total_years_experience <= 0.0 or abs(profile.total_years_experience - verified_tenure) >= 2.0:
+                profile.total_years_experience = verified_tenure
+
+        # 3. Calibrate Seniority Level from Verified Experience if needed (Respect explicit Junior / Trainee declarations)
+        has_explicit_junior = bool(re.search(r'\b(junior|intern|fresh|entry|trainee|aspiring)\b', profile.personal_info.headline or "", re.IGNORECASE))
+        if not has_explicit_junior:
+            if profile.total_years_experience >= 8.0 and "Lead" not in profile.seniority_level and "Director" not in profile.seniority_level:
+                profile.seniority_level = "Lead / Staff"
+            elif 5.0 <= profile.total_years_experience < 8.0 and "Senior" not in profile.seniority_level:
+                profile.seniority_level = "Senior"
+            elif 2.5 <= profile.total_years_experience < 5.0 and profile.seniority_level in ["Entry-Level / Intern", "Junior"]:
+                profile.seniority_level = "Mid-Level"
+
+        # 4. Enrich metadata
         meta_dict = {
             "source_file": meta["filename"],
             "provider": used_provider,
@@ -449,7 +608,16 @@ class AIExtractor:
             "num_pages": meta["num_pages"],
             "char_count": meta["char_count"],
             "word_count": meta["word_count"],
-            "is_live_ai": used_provider in ["gemini", "openai", "ollama"] and not profile.extraction_metadata.get("is_fallback", False)
+            "is_live_ai": used_provider in ["gemini", "openai", "ollama"] and not profile.extraction_metadata.get("is_fallback", False),
+            "verified_tenure_years": verified_tenure
         }
         profile.extraction_metadata.update(meta_dict)
         return profile
+
+    def extract_and_format_for_careerk(self, file_path: str, job_seeker_id: str) -> Dict[str, Any]:
+        """
+        End-to-End Extraction pipeline that outputs the exact schema
+        contract expected by careerk NestJS backend (NlpParseCvResponse).
+        """
+        profile = self.extract_from_file(file_path)
+        return profile.to_careerk_dict(job_seeker_id)

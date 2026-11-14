@@ -1,13 +1,13 @@
 """
 =============================================================================
-extract_cv.py - أداة استخراج وفك السير الذاتية (Standalone CV Extractor CLI)
+extract_cv.py - Standalone CV Extractor CLI
 =============================================================================
 
-الغرض (Purpose):
-- تفكيك وتحليل ملفات الـ PDF واستخراج بيانات المرشح كاملة دون تنفيذ المطابقة.
-- عرض بطاقة المرشح المنظمة وطباعتها وحفظها مباشرة في جدول candidates بقاعدة البيانات.
+PURPOSE:
+- Parse and analyze PDF resumes to extract complete structured candidate profiles without matching.
+- Print structured candidate cards and persist profiles directly to the candidates table in SQLite.
 
-كيفية التشغيل (Execution):
+EXECUTION:
 python extract_cv.py data/sample_cvs/Naser_Ashraf_Resume.pdf
 =============================================================================
 """

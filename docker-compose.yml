@@ -1,0 +1,45 @@
+services:
+  # 1. FastAPI Microservice for Backend Integration (:8000)
+  ai-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yalla_neshtaghal_ai_api
+    restart: unless-stopped
+    command: ["python", "run_api.py"]
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      - MATCHING_DIRECT_CALLBACK_URL=${MATCHING_DIRECT_CALLBACK_URL:-http://localhost:3000/internal/matching/direct/completed}
+      - MATCHING_SCRAPED_CALLBACK_URL=${MATCHING_SCRAPED_CALLBACK_URL:-http://localhost:3000/internal/matching/scraped/completed}
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # 2. Streamlit Interactive Demo & Evaluation Dashboard (:8501)
+  ai-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yalla_neshtaghal_ai_dashboard
+    restart: unless-stopped
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      - AI_PROVIDER=${AI_PROVIDER:-gemini}
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

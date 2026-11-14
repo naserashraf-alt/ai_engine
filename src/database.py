@@ -1,23 +1,23 @@
 """
 =============================================================================
-src/database.py - محرك قاعدة البيانات المركزية (SQLite Relational Database)
+src/database.py - Central Relational Database Engine (SQLite & FTS5)
 =============================================================================
 
-الغرض (Purpose):
-- إدارة قاعدة البيانات المركزية jobs.db التي حلت محل ملفات الـ JSON في المشروع.
-- يوفر جداول مفهرسة واستعلامات فائقة السرعة (0.005 ثانية) ومحرك بحث FTS5 لحظي.
+Purpose:
+- Manages the central jobs database (jobs.db) with high-speed indexed queries
+  and real-time FTS5 full-text search.
+- Handles atomic operations, WAL mode concurrency, and relational mapping.
 
-الجداول المدارة (Managed Tables):
-1. jobs: الوظائف النشطة الـ 7,210 وتفاصيلها الكاملة والدولة المعيارية ونمط الريموت.
-2. candidates: السير الذاتية المستخرجة وبيانات المرشحين.
-3. reports: تقارير الاستشارات المهنية الصادرة عن الوكيل الذكي.
-4. report_evaluations: التقييمات التفصيلية لكل وظيفة (الماتش، الفجوات، الأسئلة).
-5. partition_summaries: ملخصات الإحصائيات والتوزيع الجغرافي.
-6. jobs_fts: جدول البحث النصي الكامل اللحظي (Full-Text Search FTS5).
+Managed Tables:
+1. jobs: Active job records, metadata, country partitions, and remote work modes.
+2. skills & job_skills: Relational taxonomy mapping jobs to extracted skills.
+3. candidates: Extracted CV profiles and candidate attributes.
+4. reports & report_evaluations: Career advisor reports, match scores, and gap milestones.
+5. jobs_fts: Real-time Porter-tokenized FTS5 full-text search index.
 
-الاتصالات والتبعيات (Dependencies & Connections):
-- يستدعي: config.py (لمسار قاعدة البيانات المركزي)
-- يُستورد في: src/matcher.py, app.py, run_agent.py, extract_cv.py, scripts/*
+Dependencies:
+- Calls: config.py
+- Imported in: src/matcher.py, src/api_server.py, app.py, run_agent.py, scripts/*
 =============================================================================
 """
 

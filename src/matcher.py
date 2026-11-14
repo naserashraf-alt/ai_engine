@@ -1,20 +1,23 @@
 """
 =============================================================================
-src/matcher.py - محرك الفلترة والمطابقة التخصصية (Precision Job Matcher)
+src/matcher.py - Advanced Hybrid Job Matcher & SOTA Precision Reranker
 =============================================================================
 
-الغرض (Purpose):
-- سحب وترشيح أنسب الوظائف من قاعدة البيانات (7,210 وظيفة) لتقييمها بواسطة الـ AI Agent.
-- تطبيق نظام العزل التخصصي (Domain Isolation) عبر Word-Boundary Regex لمنع تداخل المجالات.
-- تطبيق نظام العزل الهرمي للخبرة (Strict Seniority Alignment) لمنع مطابقة وظائف Senior لمبتدئ.
+Purpose:
+- Ranks and filters active job vacancies with high precision by combining:
+  1. Domain Isolation Gating (strict boundary protection against cross-domain noise).
+  2. Semantic Skill Graph Ontology with foundational must-have weighting.
+  3. Dense Vector Similarity (TF-IDF Cosine Semantic Space).
+  4. Reciprocal Rank Fusion (RRF, k=60) for optimal hybrid recall.
+  5. Multi-Factor SOTA Precision Reranker to prioritize practical role execution.
 
-المدخلات والمخرجات (Inputs / Outputs):
-- المدخل: كائن `ResumeProfile` للمرشح، الفلتر الجغرافي (الدولة)، وفلتر الريموت.
-- المخرج: قائمة مختصرة من كائنات `CandidateJobSummary` تمثل أفضل الوظائف المتوافقة.
+Inputs / Outputs:
+- Input: `ResumeProfile` object, optional geographic country filter, remote flag.
+- Output: Ranked list of `CandidateJobSummary` objects reflecting true execution fit.
 
-الاتصالات والتبعيات (Dependencies & Connections):
-- يستدعي: src/database.py, src/schemas.py
-- يُستورد في: app.py, run_agent.py
+Dependencies:
+- Calls: src/database.py, src/schemas.py, src/skills_ontology.py
+- Imported in: src/api_server.py, app.py, run_agent.py
 =============================================================================
 """
 
@@ -22,13 +25,17 @@ import os
 import re
 import sys
 import json
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 from src.schemas import ResumeProfile, CandidateJobSummary
+from src.skills_ontology import SkillOntology
 
 
 class JobMatcher:
-    """Retrieves relevant job candidates from 7,200+ active jobs for AI Agent evaluation."""
+    """Enterprise-grade Hybrid Job Matcher combining Domain Isolation, Skill Ontology, and Dense Vector Similarity."""
 
     # Domain Positive Patterns (Word Boundary Protected)
     DOMAIN_POSITIVE_PATTERNS = {
@@ -41,7 +48,7 @@ class JobMatcher:
             re.IGNORECASE
         ),
         "data engineering": re.compile(
-            r'\b(data engineer|etl|big data|spark|hadoop|airflow|kafka|data pipeline)\b',
+            r'\b(data engineer|etl|elt|big data|spark|hadoop|airflow|kafka|data pipeline|snowflake|dbt|data warehouse|data modeling|sql developer|analytics engineer)\b',
             re.IGNORECASE
         ),
         "backend engineering": re.compile(
@@ -66,7 +73,7 @@ class JobMatcher:
         )
     }
 
-    # Negative patterns to avoid cross-domain false positives (e.g. AI candidate matching Java Backend)
+    # Negative patterns to avoid cross-domain false positives
     DOMAIN_NEGATIVE_PATTERNS = {
         "ai / machine learning": re.compile(
             r'\b(java backend|php developer|wordpress|sales|marketing|recruiter|hr manager|accountant|frontend developer|react developer|angular developer|flutter developer)\b',
@@ -163,7 +170,6 @@ class JobMatcher:
         """Removes trailing location names (like ', Cairo, Egypt') from job title."""
         if not raw_title:
             return ""
-        # Remove trailing geographic tags appended by job boards
         cleaned = re.sub(r'[,\|\-–]\s*(Cairo|Egypt|Remote|Germany|Berlin|London|USA|UAE|Dubai|Saudi Arabia|KSA|Riyadh).*$', '', raw_title, flags=re.IGNORECASE)
         return cleaned.strip()
 
@@ -175,36 +181,19 @@ class JobMatcher:
         remote_only: bool = False
     ) -> List[CandidateJobSummary]:
         """
-        Retrieves the top candidate jobs strictly aligned with the candidate's domain
-        using word-boundary regex to prevent false matches (like 'ai' inside 'Cairo').
-        Uses SQLite database when available for high performance.
+        Executes Advanced Hybrid Retrieval:
+        1. Domain Isolation Gating (Regex Word Boundaries).
+        2. Skill Graph Ontology Matching (Synergy & Partial Credit).
+        3. Semantic Vector Similarity (TF-IDF Cosine Similarity).
+        4. Reciprocal Rank Fusion (RRF) to merge Sparse & Dense rankings.
         """
         jobs = self.load_jobs(country=country, remote_only=remote_only)
-
         if not jobs:
             return []
 
         cand_domain = profile.primary_domain.lower()
-        cand_skills = set(profile.normalized_skills_flat)
-        cand_seniority = (profile.seniority_level or "Junior").lower()
+        cand_skills = list(profile.normalized_skills_flat)
         cand_years = float(profile.total_years_experience or 0.0)
-
-        # Determine candidate seniority tier
-        is_cand_junior = (
-            "entry" in cand_seniority
-            or "intern" in cand_seniority
-            or "junior" in cand_seniority
-            or cand_years < 2.5
-        )
-        is_cand_senior = (
-            "senior" in cand_seniority
-            or "lead" in cand_seniority
-            or "staff" in cand_seniority
-            or "principal" in cand_seniority
-            or "director" in cand_seniority
-            or cand_years >= 5.0
-        )
-        is_cand_mid = not is_cand_junior and not is_cand_senior
 
         pos_pattern = self.DOMAIN_POSITIVE_PATTERNS.get(
             cand_domain,
@@ -212,97 +201,201 @@ class JobMatcher:
         )
         neg_pattern = self.DOMAIN_NEGATIVE_PATTERNS.get(cand_domain)
 
-        scored_candidates = []
+        # -------------------------------------------------------------
+        # Step 1: Pre-Filter Candidates through Domain Gating
+        # -------------------------------------------------------------
+        gated_jobs: List[Tuple[int, Dict[str, Any], str, str, List[str], str]] = []
 
         for idx, job in enumerate(jobs):
             raw_title = job.get("title") or job.get("job_title") or "Software Engineer"
             clean_title = self.clean_title_for_matching(raw_title)
-            company = job.get("company") or "Technology Co."
-            location = job.get("location") or "Remote"
-            url = job.get("source_url") or job.get("apply_url") or job.get("url") or "https://www.linkedin.com/jobs"
-            req_skills = job.get("required_skills") or job.get("skills") or []
             desc = job.get("cleaned_description") or job.get("description") or ""
+            req_skills = job.get("required_skills") or job.get("skills") or []
 
-            # Check positive pattern in clean title
+            # Check positive pattern in clean title or initial description
             is_title_match = bool(pos_pattern.search(clean_title))
             is_desc_match = bool(pos_pattern.search(desc[:500]))
 
             # Check negative pattern
             has_negative = bool(neg_pattern.search(clean_title)) if neg_pattern else False
-
-            # If it explicitly matches the negative pattern and title doesn't have positive, disqualify
             if has_negative and not is_title_match:
                 continue
 
-            # ==============================================================
-            # PRACTICAL CAPABILITY & RELEVANCE SCORING ("Can they do the job?")
-            # ==============================================================
-            title_lower = clean_title.lower()
-            job_level_lower = (job.get("experience_level") or "Mid-Level").lower()
-
-            # Base relevance starts from practical capability, NOT rigid titles
-            relevance = 0
-
-            # 1. Technical Domain Match (Essential for job execution)
-            if is_title_match:
-                relevance += 120  # Primary match on target title
-            elif is_desc_match:
-                relevance += 60   # Domain keywords confirmed in role description
-
-            # 2. Executive Management Demotion (Only for C-Suite / VP / Director roles)
-            is_job_executive = bool(re.search(r'\b(vp|vice president|chief|director|head of)\b', title_lower))
-            if is_job_executive and cand_years < 4.0:
-                relevance -= 50  # Executive management roles require organizational scale
-
-            # 3. Hands-on Technical Stack Overlap (Core indicator of execution ability)
-            if req_skills:
-                req_skills_clean = [str(s).lower().strip() for s in req_skills]
-                overlap = [s for s in req_skills_clean if s in cand_skills]
-            else:
-                desc_lower = desc[:1500].lower()
-                overlap = [
-                    s for s in cand_skills
-                    if len(s) >= 3 and re.search(r'\b' + re.escape(s.lower()) + r'\b', desc_lower)
-                ]
-
-            # High weight on skills: Can the candidate actually write the code and execute the stack?
-            relevance += (len(overlap) * 30)
-            if len(overlap) >= 3:
-                relevance += 50   # Substantial practical skill synergy
-
-            # Only consider jobs that have domain relevance
-            if relevance < 30:
+            # Must exhibit basic domain relevance
+            if not is_title_match and not is_desc_match:
                 continue
 
-            final_skills = [str(s) for s in (req_skills if req_skills else overlap[:8])]
+            gated_jobs.append((idx, job, raw_title, clean_title, req_skills, desc))
+
+        # Fallback if gating yielded very few jobs
+        if len(gated_jobs) < top_k and jobs:
+            for idx, job in enumerate(jobs[:top_k * 2]):
+                raw_title = job.get("title") or "Software Engineer"
+                clean_title = self.clean_title_for_matching(raw_title)
+                desc = job.get("cleaned_description") or ""
+                req_skills = job.get("required_skills") or []
+                gated_jobs.append((idx, job, raw_title, clean_title, req_skills, desc))
+
+        # -------------------------------------------------------------
+        # Step 2: Skill Ontology Synergy & Practical Capability Scoring
+        # -------------------------------------------------------------
+        skill_ranked_list: List[Tuple[float, int, CandidateJobSummary]] = []
+        doc_texts: List[str] = []
+
+        for original_idx, job, raw_title, clean_title, req_skills, desc in gated_jobs:
+            # If job has no extracted skills in DB, dynamically extract canonical skills from job description
+            if not req_skills and desc:
+                desc_lower = desc.lower()
+                found_req = []
+                for alias in SkillOntology.CANONICAL_ALIASES.keys():
+                    if len(alias) >= 2 and re.search(r'\b' + re.escape(alias) + r'\b', desc_lower):
+                        found_req.append(SkillOntology.canonicalize(alias))
+                req_skills = list(dict.fromkeys(found_req))[:12]
+
+            title_lower = clean_title.lower()
+            is_title_match = bool(pos_pattern.search(clean_title))
+
+            # Domain relevance score
+            domain_score = 120.0 if is_title_match else 60.0
+
+            # Seniority alignment adjustment in candidate retrieval
+            is_job_lead = bool(re.search(r'\b(vp|vice president|chief|director|head of|lead|principal|architect|staff)\b', title_lower))
+            is_job_senior = bool(re.search(r'\b(senior|sr\.?)\b', title_lower))
+            is_job_junior = bool(re.search(r'\b(junior|jr\.?|entry|intern|fresh|associate)\b', title_lower))
+
+            seniority_adj = 0.0
+            is_cand_junior = (cand_years <= 2.5) or ("junior" in (profile.seniority_level or "").lower())
+
+            if is_job_lead:
+                if is_cand_junior:
+                    seniority_adj = -120.0  # Heavy penalty: Juniors should never be matched to Lead/Architect
+                elif cand_years < 5.0:
+                    seniority_adj = -60.0
+            elif is_job_senior:
+                if is_cand_junior:
+                    seniority_adj = -90.0  # Heavy penalty: Juniors should not match Senior roles
+                elif cand_years >= 5.0:
+                    seniority_adj = +25.0
+            elif is_job_junior:
+                if is_cand_junior:
+                    seniority_adj = +80.0  # Major boost: prioritize Junior/Entry-Level roles for Junior candidates
+                elif cand_years > 5.0:
+                    seniority_adj = -30.0
+
+            # Skill Ontology Evaluation (with Core Foundational Skills weighting)
+            synergy_res = SkillOntology.evaluate_skill_synergy(cand_skills, req_skills)
+            synergy_score = synergy_res["synergy_score"]
+            matched_skills = synergy_res["matched_skills"]
+
+            # Practical capability composite score (with richness bonus for comprehensive job postings)
+            richness_adj = 25.0 if len(desc) > 300 else -40.0
+            capability_score = domain_score + seniority_adj + (synergy_score * 1.5) + richness_adj
+
+            # Build CandidateJobSummary with true job required skills
+            company = job.get("company") or "Technology Co."
+            location = job.get("location") or "Remote"
+            url = job.get("source_url") or job.get("apply_url") or job.get("url") or "https://www.linkedin.com/jobs"
+
+            # Use actual required skills for clarity, fallback to matched or top stack
+            display_skills = [str(s) for s in req_skills[:10]] if req_skills else (matched_skills if matched_skills else cand_skills[:5])
 
             job_summary = CandidateJobSummary(
-                job_id=str(job.get("job_id") or job.get("id") or idx + 1),
+                job_id=str(job.get("job_id") or job.get("id") or original_idx + 1),
                 job_title=raw_title,
                 company=company,
                 location=location,
                 source_url=url,
                 experience_level=job.get("experience_level", "Mid-Level"),
-                required_skills=final_skills,
+                required_skills=display_skills,
                 description_snippet=desc[:500].strip()
             )
-            scored_candidates.append((relevance, job_summary))
 
-        # Sort by relevance descending
-        scored_candidates.sort(key=lambda x: x[0], reverse=True)
+            # Keep tracking data for stage 2 reranker
+            meta_tuple = {
+                "synergy_score": synergy_score,
+                "domain_match": is_title_match,
+                "seniority_adj": seniority_adj,
+                "matched_skills": matched_skills
+            }
+            skill_ranked_list.append((capability_score, len(doc_texts), job_summary, meta_tuple))
+            # Text for vector similarity
+            doc_texts.append(f"{raw_title} {' '.join(display_skills)} {desc[:600]}")
 
-        # Fallback if no strict domain matches: return generic tech roles rather than empty
-        if not scored_candidates and jobs:
-            for idx, job in enumerate(jobs[:top_k]):
-                scored_candidates.append((10, CandidateJobSummary(
-                    job_id=str(job.get("job_id") or idx + 1),
-                    job_title=job.get("title") or "Software Engineer",
-                    company=job.get("company") or "Tech Co",
-                    location=job.get("location") or "Remote",
-                    source_url=job.get("source_url") or "https://www.linkedin.com/jobs",
-                    experience_level=job.get("experience_level", "Mid-Level"),
-                    required_skills=[str(s) for s in (job.get("required_skills") or [])[:10]],
-                    description_snippet=(job.get("cleaned_description") or "")[:500].strip()
-                )))
+        # -------------------------------------------------------------
+        # Step 3: Semantic Dense Vector Similarity (TF-IDF Cosine Sim)
+        # -------------------------------------------------------------
+        dense_ranked_indices: List[Tuple[float, int]] = []
+        similarity_map: Dict[int, float] = {}
+        if doc_texts:
+            try:
+                candidate_text = f"{profile.primary_domain} {' '.join(cand_skills)} {profile.professional_summary or ''}"
+                corpus = [candidate_text] + doc_texts
+                vectorizer = TfidfVectorizer(max_features=4000, stop_words="english", ngram_range=(1, 2))
+                tfidf_matrix = vectorizer.fit_transform(corpus)
 
-        return [item[1] for item in scored_candidates[:top_k]]
+                query_vec = tfidf_matrix[0:1]
+                docs_vec = tfidf_matrix[1:]
+                similarities = cosine_similarity(query_vec, docs_vec)[0]
+
+                for doc_idx, sim in enumerate(similarities):
+                    dense_ranked_indices.append((float(sim), doc_idx))
+                    similarity_map[doc_idx] = float(sim)
+            except Exception as e:
+                # If vectorizer fails gracefully fallback to index order
+                for i in range(len(doc_texts)):
+                    val = 1.0 - (i * 0.01)
+                    dense_ranked_indices.append((val, i))
+                    similarity_map[i] = val
+        else:
+            dense_ranked_indices = []
+
+        # -------------------------------------------------------------
+        # Step 4: Reciprocal Rank Fusion (RRF) - Recall Stage
+        # -------------------------------------------------------------
+        # Rank by skill synergy
+        skill_ranked_list.sort(key=lambda x: x[0], reverse=True)
+        # Rank by dense similarity
+        dense_ranked_indices.sort(key=lambda x: x[0], reverse=True)
+
+        k_rrf = 60.0
+        rrf_scores: Dict[int, float] = {}
+
+        for rank_1, (_, doc_idx, _, _) in enumerate(skill_ranked_list):
+            rrf_scores[doc_idx] = rrf_scores.get(doc_idx, 0.0) + (1.0 / (k_rrf + rank_1 + 1))
+
+        for rank_2, (_, doc_idx) in enumerate(dense_ranked_indices):
+            rrf_scores[doc_idx] = rrf_scores.get(doc_idx, 0.0) + (1.0 / (k_rrf + rank_2 + 1))
+
+        doc_to_item = {doc_idx: (summary, meta) for _, doc_idx, summary, meta in skill_ranked_list}
+        sorted_rrf = sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True)
+
+        # -------------------------------------------------------------
+        # Step 5: Multi-Factor Semantic Reranker - Precision Stage
+        # -------------------------------------------------------------
+        pool_size = max(top_k * 3, 20)
+        top_pool_indices = [doc_idx for doc_idx, _ in sorted_rrf[:pool_size] if doc_idx in doc_to_item]
+
+        reranked_candidates = []
+        for doc_idx in top_pool_indices:
+            summary, meta = doc_to_item[doc_idx]
+            synergy = meta["synergy_score"] / 100.0  # 0.0 to 1.0
+            domain_bonus = 1.0 if meta["domain_match"] else 0.5
+            vector_sim = similarity_map.get(doc_idx, 0.0)
+
+            # Seniority penalty/bonus normalized (-0.5 to +0.3)
+            raw_adj = meta["seniority_adj"]
+            seniority_factor = 0.30 if raw_adj > 30 else (-0.60 if raw_adj < -50 else 0.0)
+            desc_rich = 0.15 if len(summary.description_snippet) > 200 else -0.30
+
+            # Final Rerank Precision Formula (SOTA Multi-Factor)
+            precision_score = (
+                0.40 * synergy +
+                0.30 * domain_bonus +
+                0.15 * min(1.0, max(0.0, vector_sim)) +
+                seniority_factor +
+                desc_rich
+            )
+            reranked_candidates.append((precision_score, summary))
+
+        reranked_candidates.sort(key=lambda x: x[0], reverse=True)
+        return [summary for _, summary in reranked_candidates[:top_k]]

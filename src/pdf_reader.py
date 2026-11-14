@@ -1,19 +1,19 @@
 """
 =============================================================================
-src/pdf_reader.py - قارئ ومفكك ملفات السير الذاتية (Universal Document Extractor)
+src/pdf_reader.py - Universal Document Extractor & Text Normalizer
 =============================================================================
 
-الغرض (Purpose):
-- استخراج نصوص السير الذاتية بدقة عالية من ملفات PDF وملفات Word (DOCX).
-- معالجة الحروف المتشابكة (Ligatures)، الجداول، والرموز لإنتاج نص خام نقي.
-- يدعم استخراج بايتس الملفات (Binary bytes) للذكاء الاصطناعي متعدد الوسائط (Multimodal).
+PURPOSE:
+- Extract text from PDF and DOCX files with high fidelity.
+- Normalize ligatures, tabular data, and symbols into clean, unstructured text.
+- Support binary byte extraction for Multimodal AI reasoning.
 
-المدخلات والمخرجات (Inputs / Outputs):
-- المدخل: مسار ملف PDF أو DOCX.
-- المخرج: قاموس يحتوي على (النص المنقى، مسار الملف، عدد الصفحات، عدد الكلمات والحروف).
+INPUTS / OUTPUTS:
+- Input: PDF or DOCX file path.
+- Output: Dictionary containing cleaned text, file path, page count, and character/word metrics.
 
-الاتصالات والتبعيات (Dependencies & Connections):
-- يُستورد في: src/ai_extractor.py, app.py
+DEPENDENCIES:
+- Imported in: src/ai_extractor.py, app.py
 =============================================================================
 """
 

@@ -1,13 +1,13 @@
 """
 =============================================================================
-scripts/check_stats.py - فحص شامل لإحصائيات قاعدة البيانات والوظائف
+scripts/check_stats.py - Central Database & Jobs Analytics Inspector
 =============================================================================
 
-الغرض (Purpose):
-- يعرض إحصائيات سريعة وشاملة عن قاعدة البيانات المركزية SQLite (jobs.db).
-- يوضح توزيع الوظائف حسب الدول، مصادر السحب، ونسب العمل عن بُعد.
+PURPOSE:
+- Displays comprehensive real-time statistics on SQLite database (jobs.db).
+- Visualizes distributions by country, source platforms, work modes, and seniority.
 
-كيفية التشغيل (Execution):
+EXECUTION:
 python scripts/check_stats.py
 =============================================================================
 """
@@ -28,41 +28,41 @@ from src.database import JobsDatabase
 
 def main():
     print("=" * 75)
-    print("📊 إحصائيات قاعدة البيانات والوظائف النشطة (Database Analytics Report)")
+    print("📊 Central Database & Active Opportunities Analytics Report")
     print("=" * 75)
 
     if not os.path.exists(DB_PATH):
-        print(f"❌ لم يتم العثور على قاعدة البيانات في: {DB_PATH}")
+        print(f"❌ Database not found at: {DB_PATH}")
         return
 
     db = JobsDatabase(DB_PATH)
     stats = db.get_stats()
 
-    print(f"  ├ مسار قاعدة البيانات: {DB_PATH}")
-    print(f"  ├ إجمالي الوظائف النشطة: {stats['total_jobs']:,} وظيفة")
-    print(f"  ├ الوظائف المتاحة عن بُعد (Remote): {stats['total_remote']:,} وظيفة")
-    print(f"  ├ الوظائف الميدانية (On-site): {stats['total_onsite']:,} وظيفة")
-    print(f"  ├ عدد الشركات المسجلة: {stats['unique_companies']:,} شركة")
-    print(f"  ├ حجم ملف قاعدة البيانات: {stats['db_size_mb']} MB")
+    print(f"  ├ Database Path: {DB_PATH}")
+    print(f"  ├ Total Active Jobs: {stats['total_jobs']:,} jobs")
+    print(f"  ├ Remote Opportunities: {stats['total_remote']:,} jobs")
+    print(f"  ├ On-site Opportunities: {stats['total_onsite']:,} jobs")
+    print(f"  ├ Unique Companies: {stats['unique_companies']:,} companies")
+    print(f"  ├ Database File Size: {stats['db_size_mb']} MB")
 
-    print("\n🌍 توزيع الوظائف حسب الدولة (Geographic Distribution):")
+    print("\n🌍 Geographic Distribution (By Country):")
     for country, count in sorted(stats["by_country"].items(), key=lambda x: -x[1]):
         pct = (count / stats["total_jobs"] * 100) if stats["total_jobs"] else 0
-        print(f"  • {country:<28} : {count:>4} وظيفة ({pct:.1f}%)")
+        print(f"  • {country:<28} : {count:>4} jobs ({pct:.1f}%)")
 
-    print("\n🎯 توزيع الوظائف حسب مستوى الخبرة (Seniority Breakdown):")
+    print("\n🎯 Seniority Level Distribution:")
     for lvl, count in sorted(stats["by_experience_level"].items(), key=lambda x: -x[1]):
         pct = (count / stats["total_jobs"] * 100) if stats["total_jobs"] else 0
-        print(f"  • {lvl:<28} : {count:>4} وظيفة ({pct:.1f}%)")
+        print(f"  • {lvl:<28} : {count:>4} jobs ({pct:.1f}%)")
 
-    print("\n🔗 مصادر جمع البيانات (Scraping Sources Breakdown):")
+    print("\n🔗 Sourcing Platform Breakdown:")
     for src, count in sorted(stats["by_source"].items(), key=lambda x: -x[1]):
-        print(f"  • {src:<32} : {count:>4} وظيفة")
+        print(f"  • {src:<32} : {count:>4} jobs")
 
     candidates = db.get_all_candidates()
     reports = db.get_all_reports()
-    print(f"\n👤 إجمالي المرشحين في جدول candidates : {len(candidates)}")
-    print(f"📁 إجمالي التقارير في جدول reports        : {len(reports)}")
+    print(f"\n👤 Total Registered Candidates (candidates table) : {len(candidates)}")
+    print(f"📁 Total Advisory Reports (reports table)          : {len(reports)}")
     print("=" * 75 + "\n")
 
 

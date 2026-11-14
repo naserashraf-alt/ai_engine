@@ -1,17 +1,17 @@
 """
 =============================================================================
-run_agent.py - المايسترو ومنفذ خط الأنابيب الكامل عبر Terminal (CLI Pipeline)
+run_agent.py - End-to-End Career AI Pipeline Orchestrator (CLI Pipeline)
 =============================================================================
 
-الغرض (Purpose):
-- تنفيذ خط الأنابيب الذكي كاملاً من سطر الأوامر (End-to-End Execution):
-  1. استخراج الـ CV باستخدام AI Extractor.
-  2. سحب أفضل الوظائف المتوافقة من قاعدة البيانات SQLite عبر JobMatcher.
-  3. استدعاء CareerAdvisorAgent لحساب درجات التوافق وتحليل الفجوات وخطط ATS.
-  4. طباعة النتائج في التيرمينال وحفظها تلقائياً في قاعدة البيانات jobs.db.
+PURPOSE:
+- Execute the complete intelligence pipeline from the command line:
+  1. Extract structured candidate profile from PDF resume using AIExtractor.
+  2. Retrieve best-matching active jobs from SQLite database using JobMatcher.
+  3. Invoke CareerAdvisorAgent to compute match scores, gap analysis, and ATS roadmaps.
+  4. Display results in console and automatically persist dossier to SQLite database (jobs.db).
 
-كيفية التشغيل (Execution):
-python run_agent.py [اسم ملف السيرة الذاتية] [--country مصر] [--provider gemini]
+EXECUTION:
+python run_agent.py [path_to_cv_pdf] [--country Egypt] [--provider gemini]
 =============================================================================
 """
 
@@ -62,9 +62,9 @@ def print_agent_report_to_terminal(
             print(f"        ❌ Missing Skills   : {', '.join(ev.missing_skills[:6])}")
         print(f"        🔗 Apply URL        : {ev.source_url}")
 
-    # 2. Executive Arabic Summary
+    # 2. Executive Strategic Summary
     print("\n" + "─" * 80)
-    print(" 🌟 الملخص التنفيذي والاستراتيجي (Executive Arabic Strategy):")
+    print(" 🌟 EXECUTIVE STRATEGIC CAREER SUMMARY:")
     print("─" * 80)
     print(f"\n{report.executive_arabic_summary.strip()}\n")
 

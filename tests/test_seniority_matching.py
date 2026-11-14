@@ -1,18 +1,18 @@
 """
 =============================================================================
-tests/test_seniority_matching.py - اختبار دقة المطابقة المعتمدة على الكفاءة العملية
-(Practical Capability & Job Execution Assessment Test)
+tests/test_seniority_matching.py - Practical Capability & Job Execution Assessment Test
 =============================================================================
 
-الغرض (Purpose):
-- التأكد من أن التوافق (Match Score) يعتمد على سؤال عملي واحد:
-  "هل الشخص المتقدم يقدر يشتغل الوظيفة دي عملياً أم لا؟" (Practical Capability).
-- التأكد من عدم حرمان المرشح الذي يمتلك مهارات هندسية قوية من وظائف الهندسة الحقيقية
-  (مثل AI Engineer / ML Engineer / Software Engineer) بدلاً من حصرهم في التدريب الطلابي فقط.
-- التحقق من توليد خطوات وتوصيات إجرائية واضحة لكل وظيفة توضح للمرشح:
-  "ما الذي يتبقى له ليفعله لكي يتقدم لهذه الوظيفة بثقة؟" (Actionable application roadmap).
+PURPOSE:
+- Validate that the match score is driven by a single practical question:
+  "Can the candidate realistically execute this role?" (Practical Capability).
+- Ensure qualified candidates with strong engineering competencies (Python, PyTorch,
+  Deep Learning, Docker) are matched with true engineering roles (AI/ML Engineer)
+  rather than being artificially constrained to student internships.
+- Verify generation of actionable, concrete application steps for each role:
+  "What remains for the candidate to apply with confidence?" (Actionable application roadmap).
 
-كيفية التشغيل (Execution):
+EXECUTION:
 python tests/test_seniority_matching.py
 =============================================================================
 """
@@ -29,13 +29,13 @@ from src.agent_advisor import CareerAdvisorAgent
 from src.schemas import ResumeProfile
 
 
-def run_capability_matching_tests():
+def test_capability_matching():
     matcher = JobMatcher()
     agent = CareerAdvisorAgent()
 
     print("=" * 80)
-    print("🧪 1. اختبار تقييم القدرة التنفيذية للمرشح ('هل يستطيع أداء الوظيفة؟')")
-    print("   المرشح: مهندس ذكاء اصطناعي يمتلك مهارات قوية (Python, PyTorch, Deep Learning, Docker)")
+    print("🧪 1. Testing Candidate Practical Execution Assessment ('Can they execute the role?')")
+    print("   Candidate: AI Engineer with strong skills (Python, PyTorch, Deep Learning, Docker)")
     print("=" * 80)
 
     ai_candidate = ResumeProfile(
@@ -48,29 +48,29 @@ def run_capability_matching_tests():
     cands = matcher.retrieve_candidates(ai_candidate, top_k=5)
     report = agent.evaluate_and_advise(ai_candidate, cands, top_n=5)
 
-    assert len(report.job_evaluations) > 0, "يجب استرجاع وظائف متوافقة"
+    assert len(report.job_evaluations) > 0, "Compatible jobs must be retrieved"
 
-    print(f"  ├ تم استرجاع وتقييم {len(report.job_evaluations)} وظيفة:")
+    print(f"  ├ Retrieved and evaluated {len(report.job_evaluations)} jobs:")
     for ev in report.job_evaluations:
         print(f"\n  ✅ #{ev.job_rank} | {ev.job_title} @ {ev.company} -> Match: {ev.agent_match_score}%")
-        print(f"      • تقييم القدرة التنفيذية : {ev.scoring_rationale}")
-        print(f"      • خطوات التقديم المطلوبة : {ev.exact_action_to_100}")
-        print(f"      • المهارات المتطابقة    : {', '.join(ev.matched_skills)}")
+        print(f"      • Capability Assessment : {ev.scoring_rationale}")
+        print(f"      • Required Application Steps : {ev.exact_action_to_100}")
+        print(f"      • Matched Skills        : {', '.join(ev.matched_skills)}")
 
-        # تأكيد أن التقرير يجيب على السؤال العملي
-        assert "Can the candidate execute this role?" in ev.scoring_rationale, "يجب أن يوضح المنطق قدرة المرشح على أداء الوظيفة"
-        assert "To qualify and apply:" in ev.exact_action_to_100, "يجب أن يوضح خطة التقديم العملية"
+        # Verify rationale answers the practical capability question
+        assert "Can the candidate execute this role?" in ev.scoring_rationale, "Rationale must reflect execution capability"
+        assert "To qualify and apply:" in ev.exact_action_to_100, "Must provide actionable application roadmap"
 
     print("\n" + "=" * 80)
-    print("🧪 2. التحقق من توصيات خطوات التقديم لكل وظيفة (Application Checklist)")
+    print("🧪 2. Verifying Application Action Steps (Application Checklist)")
     print("=" * 80)
     for ev in report.job_evaluations:
         print(f"  • {ev.job_title[:35]:<35} ──> {ev.exact_action_to_100}")
 
     print("\n" + "=" * 80)
-    print("✅ جميع اختبارات تقييم القدرة العملية وخطوات التقديم نجحت بنسبة 100%!")
+    print("✅ All practical capability and application action tests passed successfully (100%)!")
     print("=" * 80 + "\n")
 
 
 if __name__ == "__main__":
-    run_capability_matching_tests()
+    test_capability_matching()

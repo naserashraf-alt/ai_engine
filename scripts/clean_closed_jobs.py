@@ -57,11 +57,24 @@ def is_job_closed(job: dict, headers: dict) -> tuple[dict, bool, str]:
                 **headers,
                 "Referer": "https://www.google.com/"
             }
-            res = requests.get(url, headers=wuzzuf_headers, timeout=5)
+            res = requests.get(url, headers=wuzzuf_headers, timeout=6)
             if res.status_code in [404, 410]:
                 return job, True, "Wuzzuf 404 Not Found"
             if res.status_code == 200:
-                if "this job is closed" in res.text.lower() or "job has expired" in res.text.lower():
+                text_lower = res.text.lower()
+                wuzzuf_closed_markers = [
+                    "this job is closed",
+                    "job has expired",
+                    '"status":"expired"',
+                    '"closed":"closed"',
+                    '"closed":"مغلقة"',
+                    "no longer available to apply for",
+                    "هذه الوظيفة لم تعد متاحة",
+                    "لم تعد متاحة للتقديم",
+                    "closed-label",
+                    "expired-badge"
+                ]
+                if any(m in text_lower for m in wuzzuf_closed_markers):
                     return job, True, "Wuzzuf Expired/Closed Badge"
             return job, False, "Active"
         except Exception:

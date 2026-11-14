@@ -1,33 +1,94 @@
 """
 =============================================================================
-src/schemas.py - نماذج البيانات الصارمة (Pydantic V2 Schemas)
+src/schemas.py - Strongly-Typed Data Contracts (Pydantic V2 Schemas)
 =============================================================================
 
-الغرض (Purpose):
-- تعريف الهياكل البيانية المنظمة الصارمة (Strongly-Typed Data Contracts) للنظام.
-- يضمن التحقق الآلي من صحة بيانات السير الذاتية وتقارير الذكاء الاصطناعي وخلوها من الأخطاء.
+Purpose:
+- Defines standardized, strongly-typed data structures for the entire AI Engine.
+- Guarantees automated validation, serialization, and error-free integration across
+  CV parsing, hybrid matching, ATS scoring, and agent career advisement.
 
-النماذج الرئيسية (Core Models):
-1. نماذج السيرة الذاتية (Resume Profile):
-   - PersonalInfo: بيانات الاتصال والروابط (LinkedIn, GitHub).
-   - ExperienceItem, EducationItem, ProjectItem, CertificationItem: الخبرات والتعليم.
-   - SkillsCategorized: تصنيف المهارات (Technical, Tools, Soft).
-   - ResumeProfile: البروفايل الكامل للمرشح.
+Core Models:
+1. Resume Profile:
+   - PersonalInfo: Contact information and verified profiles (LinkedIn, GitHub).
+   - ExperienceItem, EducationItem, ProjectItem, CertificationItem: Career history.
+   - SkillsCategorized: Grouped skills (Technical, Tools & Platforms, Soft).
+   - ResumeProfile: Full candidate representation with Careerk export support.
 
-2. نماذج المطابقة والوكيل الاستشاري (Matching & Agent):
-   - CandidateJobSummary: بطاقة الوظيفة المرشحة للمطابقة.
-   - AgentJobEvaluation: تقييم الوكيل الذكي للوظيفة وحساب الماتش والفجوات.
-   - ResumeMakeover: صياغة نقاط السيرة الذاتية بمعادلة Google XYZ.
-   - RoadmapPhase: مراحل خارطة الطريق المهنية (12 أسبوعاً).
-   - CareerAgentReport: التقرير الاستراتيجي الشامل.
+2. Matching & Advisory Models:
+   - CandidateJobSummary: Retrieved job record for matching.
+   - AgentJobEvaluation: Multi-agent evaluation, match scoring, and gap analysis.
+   - ResumeMakeover: Impact-driven bullet improvements using Google XYZ formula.
+   - RoadmapPhase: Structured 12-week career growth roadmap.
+   - CareerAgentReport: Full strategic advisory dossier.
 
-الاتصالات والتبعيات (Dependencies & Connections):
-- يُستورد في: src/ai_extractor.py, src/matcher.py, src/agent_advisor.py, app.py, run_agent.py
+Dependencies:
+- Imported in: src/ai_extractor.py, src/matcher.py, src/agent_advisor.py,
+  src/ats_scorer.py, src/api_server.py, app.py
 =============================================================================
 """
 
 from typing import List, Dict, Optional, Any
+from datetime import datetime, timezone
+import re
 from pydantic import BaseModel, Field
+
+
+def parse_date_helper(date_str: Optional[str], is_end: bool = False) -> Optional[datetime]:
+    """Helper to parse varied date representations into datetime objects."""
+    if not date_str:
+        return None
+    s = str(date_str).strip().lower()
+    if s in ['present', 'current', 'now', 'ongoing', 'active']:
+        return datetime.now(timezone.utc)
+    
+    # Try YYYY-MM or YYYY/MM
+    m = re.search(r'(\d{4})[-/.](\d{1,2})', s)
+    if m:
+        year, month = int(m.group(1)), int(m.group(2))
+        return datetime(year, min(max(month, 1), 12), 1, tzinfo=timezone.utc)
+        
+    # Month name mapping
+    month_map = {
+        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+        'january': 1, 'february': 2, 'march': 3, 'april': 4, 'may': 5, 'june': 6,
+        'july': 7, 'august': 8, 'september': 9, 'october': 10, 'november': 11, 'december': 12
+    }
+    # Try Month YYYY (e.g. Jan 2021 or January 2021)
+    m = re.search(r'([a-zA-Z]+)[,\s]+(\d{4})', s)
+    if m:
+        month_str, year = m.group(1).lower(), int(m.group(2))
+        month = month_map.get(month_str, 12 if is_end else 1)
+        return datetime(year, month, 1, tzinfo=timezone.utc)
+
+    # Try YYYY only
+    m = re.search(r'\b(19\d{2}|20\d{2})\b', s)
+    if m:
+        year = int(m.group(1))
+        month = 12 if is_end else 1
+        return datetime(year, month, 1, tzinfo=timezone.utc)
+
+    return None
+
+
+def calculate_tenure_from_experiences(experiences: List[Any]) -> float:
+    """Calculates verified total years of experience from a list of ExperienceItems."""
+    total_months = 0
+    now = datetime.now(timezone.utc)
+    for exp in experiences:
+        s_date = parse_date_helper(getattr(exp, 'start_date', None))
+        e_date = parse_date_helper(getattr(exp, 'end_date', None), is_end=True)
+        if getattr(exp, 'is_current', False) or (e_date is None and s_date is not None):
+            e_date = now
+            
+        if s_date and e_date and e_date >= s_date:
+            months = (e_date.year - s_date.year) * 12 + (e_date.month - s_date.month) + 1
+            total_months += min(months, 180)  # Safe cap
+            
+    if total_months <= 0:
+        return 0.0
+    return round(total_months / 12.0, 1)
 
 
 class PersonalInfo(BaseModel):
@@ -98,6 +159,136 @@ class ResumeProfile(BaseModel):
     certifications: List[CertificationItem] = Field(default_factory=list)
     languages: List[LanguageItem] = Field(default_factory=list)
     extraction_metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadata about extraction (provider, model, token count, status)")
+
+    def to_careerk_dict(self, job_seeker_id: str) -> Dict[str, Any]:
+        """
+        Transforms ResumeProfile into the exact NlpParseCvResponse schema
+        expected by careerk NestJS backend (cv-parse.service.ts).
+        """
+        # Split first and last name
+        name_parts = (self.personal_info.full_name or "Candidate").strip().split(maxsplit=1)
+        first_name = name_parts[0]
+        last_name = name_parts[1] if len(name_parts) > 1 else ""
+
+        # Map DegreeTypeEnum
+        def map_degree_type(deg: str) -> str:
+            d = (deg or "").upper()
+            if any(k in d for k in ["BACHELOR", "BSC", "B.S", "LICENCE", "ENGINEER"]):
+                return "BACHELOR"
+            if any(k in d for k in ["MASTER", "MSC", "M.S", "MBA"]):
+                return "MASTER"
+            if any(k in d for k in ["PHD", "DOCTOR"]):
+                return "PHD"
+            if "ASSOCIATE" in d:
+                return "ASSOCIATE"
+            if "BOOTCAMP" in d:
+                return "BOOTCAMP"
+            if "CERTIF" in d:
+                return "CERTIFICATION"
+            if any(k in d for k in ["HIGH SCHOOL", "SECONDARY", "THANAWEYA"]):
+                return "HIGH_SCHOOL"
+            return "BACHELOR"
+
+        # Map Education
+        education_payload = []
+        for edu in self.education:
+            # Parse dates
+            grad_year = None
+            if edu.graduation_year:
+                m = re.search(r'\b(19\d{2}|20\d{2})\b', edu.graduation_year)
+                if m:
+                    grad_year = m.group(1)
+
+            start_iso = f"{int(grad_year)-4}-09-01" if grad_year else "2018-09-01"
+            end_iso = f"{grad_year}-06-30" if grad_year else "2022-06-30"
+
+            gpa_float = None
+            if edu.grade_or_gpa:
+                gpa_match = re.search(r'(\d+(?:\.\d+)?)', edu.grade_or_gpa)
+                if gpa_match:
+                    try:
+                        gpa_float = float(gpa_match.group(1))
+                    except ValueError:
+                        gpa_float = None
+
+            education_payload.append({
+                "institutionName": edu.institution or "University / Higher Institute",
+                "degreeType": map_degree_type(edu.degree),
+                "fieldOfStudy": edu.field_of_study or "Computer Science / Information Technology",
+                "startDate": start_iso,
+                "endDate": end_iso,
+                "isCurrent": False,
+                "gpa": gpa_float,
+                "description": f"{edu.degree} in {edu.field_of_study or 'Computer Science'} from {edu.institution or 'Accredited Institution'}"
+            })
+
+        # Map Work Experience
+        work_payload = []
+        for exp in self.work_experience:
+            s_parsed = parse_date_helper(exp.start_date)
+            e_parsed = parse_date_helper(exp.end_date, is_end=True)
+            
+            s_iso = s_parsed.strftime("%Y-%m-%d") if s_parsed else "2022-01-01"
+            is_active = exp.is_current or (exp.end_date and exp.end_date.strip().lower() in ["present", "current", "now", "ongoing"])
+            e_iso = e_parsed.strftime("%Y-%m-%d") if (e_parsed and not is_active) else None
+
+            desc_parts = []
+            if exp.description:
+                desc_parts.append(exp.description)
+            if exp.key_achievements:
+                desc_parts.extend([f"• {a}" for a in exp.key_achievements])
+            desc_text = "\n".join(desc_parts) if desc_parts else f"Role of {exp.job_title} at {exp.company}"
+
+            work_payload.append({
+                "companyName": exp.company or "Company",
+                "jobTitle": exp.job_title or "Software Engineer",
+                "location": exp.location or self.personal_info.location or "Remote",
+                "startDate": s_iso,
+                "endDate": e_iso,
+                "isCurrent": is_active,
+                "description": desc_text
+            })
+
+        # Map Skills (deduplicated, verified technical vs soft)
+        skills_payload = []
+        seen_skills = set()
+        for skill_name in self.normalized_skills_flat:
+            clean = skill_name.strip()
+            if clean and clean.lower() not in seen_skills:
+                skills_payload.append({"name": clean, "verified": True})
+                seen_skills.add(clean.lower())
+
+        for skill_name in self.skills.soft_skills:
+            clean = skill_name.strip()
+            if clean and clean.lower() not in seen_skills:
+                skills_payload.append({"name": clean, "verified": False})
+                seen_skills.add(clean.lower())
+
+        return {
+            "jobSeekerId": job_seeker_id,
+            "parsedAt": datetime.now(timezone.utc).isoformat(),
+            "data": {
+                "personalInfo": {
+                    "firstName": first_name,
+                    "lastName": last_name,
+                    "email": self.personal_info.email or "",
+                    "phone": self.personal_info.phone or "",
+                    "location": self.personal_info.location,
+                    "linkedinUrl": self.personal_info.links.get("linkedin"),
+                    "githubUrl": self.personal_info.links.get("github"),
+                    "portfolioUrl": self.personal_info.links.get("portfolio") or self.personal_info.links.get("website")
+                },
+                "professionalSummary": self.professional_summary or f"{self.seniority_level} {self.primary_domain} with proven experience in {', '.join(self.normalized_skills_flat[:5])}.",
+                "title": self.personal_info.headline or f"{self.seniority_level} {self.primary_domain}",
+                "education": education_payload,
+                "workExperience": work_payload,
+                "skills": skills_payload,
+                "yearsOfExperience": self.total_years_experience,
+                "expectedSalary": None,
+                "workPreference": "HYBRID",
+                "availabilityStatus": "OPEN_TO_WORK"
+            }
+        }
 
 
 # ==============================================================

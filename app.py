@@ -28,7 +28,7 @@ import streamlit as st
 
 # Configure wide page layout and executive branding
 st.set_page_config(
-    page_title="CareerAI | Autonomous Career Matching & Strategic Advisory",
+    page_title="يلا نشتغل (Yalla Neshtaghal) | AI Career Matching & Intelligence",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -53,6 +53,9 @@ from src.agent_advisor import CareerAdvisorAgent
 from src.schemas import ResumeProfile, CareerAgentReport, AgentJobEvaluation
 from src.database import JobsDatabase, get_db
 from src.pdf_generator import generate_career_dossier_pdf
+from src.export_manager import ExportManager
+from src.ats_scorer import ATSCompatibilityScorer
+from src.github_verifier import GitHubProofOfWorkVerifier
 
 
 # ==============================================================
@@ -290,8 +293,8 @@ with st.sidebar:
     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
         <span style="font-size: 2rem;">🚀</span>
         <div>
-            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #F8FAFC;">CareerAI</h3>
-            <span style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em;">Enterprise Engine</span>
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #F8FAFC;">يلا نشتغل</h3>
+            <span style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em;">Yalla Neshtaghal AI Engine</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -424,9 +427,9 @@ with st.sidebar:
 # ==============================================================
 st.markdown("""
 <div class="hero-container">
-    <div class="hero-title">CareerAI — Autonomous Career Matching & Market Intelligence</div>
+    <div class="hero-title">يلا نشتغل (Yalla Neshtaghal) — Autonomous Career Matching & Market Intelligence</div>
     <div class="hero-subtitle">
-        Frontier AI Resume Extraction • Seniority-Aware Job Matching • Strategic Executive Advisory & ATS Optimization
+        منصة يلا نشتغل: Frontier AI Resume Extraction • Seniority-Aware Job Matching • Strategic Executive Advisory & ATS Optimization
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -536,6 +539,144 @@ with tab_agent:
             skills_html = "".join([f'<span class="skill-tag">{s}</span>' for s in profile.normalized_skills_flat[:36]])
             st.markdown(skills_html, unsafe_allow_html=True)
 
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Candidate Experience, Education & Project Portfolio
+            prof_tab1, prof_tab2, prof_tab3 = st.tabs([
+                "🚀 Portfolio & Architecture Projects",
+                "💼 Work Experience & Training",
+                "🎓 Academic Education"
+            ])
+
+            with prof_tab1:
+                if profile.projects:
+                    for proj in profile.projects:
+                        tech_badges = "".join([f'<span class="skill-tag skill-matched">{t}</span>' for t in proj.technologies])
+                        st.markdown(f"""
+                        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <strong style="color: #38BDF8; font-size: 1.05rem;">📦 {proj.title}</strong>
+                            </div>
+                            <p style="color: #CBD5E1; font-size: 0.92rem; margin-bottom: 8px; line-height: 1.6;">{proj.description}</p>
+                            <div>{tech_badges}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.caption("No dedicated project section extracted.")
+
+            with prof_tab2:
+                if profile.work_experience:
+                    for exp in profile.work_experience:
+                        dates_str = f" • 📅 {exp.start_date}" if exp.start_date else ""
+                        st.markdown(f"""
+                        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;">
+                            <strong style="color: #818CF8; font-size: 1.05rem;">💼 {exp.job_title}</strong> &nbsp;•&nbsp; <span style="color: #E2E8F0;">{exp.company}</span>{dates_str}
+                            <p style="color: #94A3B8; font-size: 0.92rem; margin-top: 6px; line-height: 1.5;">{exp.description}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.caption("No direct work experience entries extracted.")
+
+            with prof_tab3:
+                if profile.education:
+                    for edu in profile.education:
+                        st.markdown(f"""
+                        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;">
+                            <strong style="color: #34D399; font-size: 1.05rem;">🎓 {edu.degree}</strong>
+                            <p style="color: #E2E8F0; margin: 4px 0 0 0; font-size: 0.95rem;">🏛️ {edu.institution or 'Accredited Institution'}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.caption("No university degree specified.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ------------------------------------------------------
+        # ATS Compatibility & Empirical Verification Suite
+        # ------------------------------------------------------
+        ats_res = ATSCompatibilityScorer.evaluate(profile)
+
+        # Detect GitHub Link
+        github_url = None
+        if p.links:
+            for k, v in p.links.items():
+                if "github" in k.lower() or "github.com" in v.lower():
+                    github_url = v
+                    break
+
+        st.markdown("### 🛡️ ATS Compatibility & Empirical Proof-of-Work")
+        ats_col, gh_col = st.columns([1.1, 0.9])
+
+        with ats_col:
+            st.markdown(f"""
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 18px 22px; height: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC;">📋 ATS Compliance Audit</span>
+                    <span style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; font-weight: 700; font-size: 1.05rem; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.4);">
+                        Grade: {ats_res.grade} ({ats_res.overall_score:.1f}%)
+                    </span>
+                </div>
+                <p style="color: #94A3B8; font-size: 0.92rem; margin-bottom: 14px;">{ats_res.verdict}</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+                    <div style="background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 6px;">
+                        <span style="color: #64748B; font-size: 0.8rem;">Section Structure:</span>
+                        <strong style="float: right; color: #38BDF8;">{ats_res.breakdown.section_structure_score:.0f}%</strong>
+                    </div>
+                    <div style="background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 6px;">
+                        <span style="color: #64748B; font-size: 0.8rem;">Quantifiable Impact:</span>
+                        <strong style="float: right; color: #38BDF8;">{ats_res.breakdown.quantifiable_impact_score:.0f}%</strong>
+                    </div>
+                    <div style="background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 6px;">
+                        <span style="color: #64748B; font-size: 0.8rem;">Skill Density:</span>
+                        <strong style="float: right; color: #38BDF8;">{ats_res.breakdown.skill_density_score:.0f}%</strong>
+                    </div>
+                    <div style="background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 6px;">
+                        <span style="color: #64748B; font-size: 0.8rem;">Digital Presence:</span>
+                        <strong style="float: right; color: #38BDF8;">{ats_res.breakdown.contact_online_presence_score:.0f}%</strong>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            if ats_res.improvements:
+                with st.expander("🔍 View ATS Optimization Recommendations"):
+                    for imp in ats_res.improvements:
+                        st.markdown(f"• {imp}")
+
+        with gh_col:
+            if github_url:
+                gh_report = GitHubProofOfWorkVerifier.verify_candidate(github_url, claimed_skills=profile.normalized_skills_flat)
+                status_color = "#34D399" if gh_report.is_valid_user else "#F59E0B"
+                languages_html = ' '.join([f'<span class="skill-tag" style="background: rgba(52, 211, 153, 0.15); color: #34D399; border-color: rgba(52, 211, 153, 0.3);">{lang}</span>' for lang in gh_report.verified_languages]) if gh_report.verified_languages else '<span style="color:#94A3B8; font-size:0.85rem;">No public code repositories indexed</span>'
+                st.markdown(f"""
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 12px; padding: 18px 22px; height: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC;">💻 GitHub Proof-of-Work</span>
+                        <span style="background: rgba(52, 211, 153, 0.15); color: {status_color}; font-weight: 700; font-size: 0.95rem; padding: 4px 12px; border-radius: 20px; border: 1px solid {status_color};">
+                            @{gh_report.username} ({gh_report.public_repos_count} Repos)
+                        </span>
+                    </div>
+                    <p style="color: #94A3B8; font-size: 0.92rem; margin-bottom: 12px;">{gh_report.proof_of_work_summary}</p>
+                    <div style="margin-bottom: 8px;">
+                        <span style="color: #64748B; font-size: 0.82rem;">Verified Repo Languages:</span><br>
+                        {languages_html}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                if gh_report.top_repositories:
+                    with st.expander("📦 View Verified Public Repositories"):
+                        for repo in gh_report.top_repositories[:5]:
+                            lang_badge = f" `[{repo.language}]`" if repo.language else ""
+                            st.markdown(f"• [{repo.name}]({repo.url}){lang_badge} — {repo.description or 'No description'}")
+            else:
+                st.markdown("""
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 18px 22px; height: 100%;">
+                    <span style="font-size: 1.15rem; font-weight: 700; color: #F8FAFC;">💻 GitHub Proof-of-Work</span>
+                    <p style="color: #94A3B8; font-size: 0.92rem; margin-top: 10px;">
+                        No public GitHub profile link detected in this resume. Adding a GitHub URL enables real-time repository verification against claimed technical competencies.
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+
         st.markdown("---")
 
         # ------------------------------------------------------
@@ -551,14 +692,33 @@ with tab_agent:
             # Fallback if only Arabic summary was returned
             st.markdown(f'<div class="advisory-box"><strong>Executive Coaching Assessment:</strong><br><br>{report.executive_arabic_summary}</div>', unsafe_allow_html=True)
 
-        # Expandable Arabic Coaching Notes for dual-language accessibility
+        # Expandable Strategic Coaching Notes
         if getattr(report, "executive_arabic_summary", ""):
-            with st.expander("🌍 View Executive Arabic Coaching Notes (التقرير الاستشاري العربي)"):
+            with st.expander("🌍 View Executive Strategic Coaching Notes"):
                 st.markdown(f"""
-                <div style="direction: rtl; text-align: right; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 1.05rem; line-height: 1.8; background: #111827; padding: 18px; border-radius: 8px; border-right: 4px solid #10B981;">
+                <div style="text-align: left; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.0rem; line-height: 1.8; background: #111827; padding: 18px; border-radius: 8px; border-left: 4px solid #10B981;">
                     {report.executive_arabic_summary}
                 </div>
                 """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ------------------------------------------------------
+        # Side-by-Side Match Matrix
+        # ------------------------------------------------------
+        with st.expander("📊 View Interactive Side-by-Side Match Matrix", expanded=True):
+            matrix_data = []
+            for ev in report.job_evaluations:
+                matrix_data.append({
+                    "Rank": f"#{ev.job_rank}",
+                    "Target Role": ev.job_title,
+                    "Company": ev.company,
+                    "Overall Match": f"{ev.agent_match_score}%",
+                    "Skills Match": f"{ev.agent_skills_score}%",
+                    "Matched Stack": ", ".join(ev.matched_skills[:4]) if ev.matched_skills else "Core Domain",
+                    "Technical Gaps": ", ".join(ev.missing_skills[:3]) if ev.missing_skills else "Zero Gap"
+                })
+            st.dataframe(matrix_data, use_container_width=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -779,21 +939,34 @@ with tab_agent:
         }
         json_str = json.dumps(full_dossier, indent=2, ensure_ascii=False)
 
-        # Generate Executive Dossier PDF
-        pdf_bytes = generate_career_dossier_pdf(report, candidate_profile=profile)
-
-        col_export_1, col_export_2 = st.columns(2)
-        with col_export_1:
+        col_exp1, col_exp2, col_exp3, col_exp4 = st.columns(4)
+        with col_exp1:
             st.download_button(
-                label="📥 Download Executive Career Dossier (PDF)",
-                data=pdf_bytes,
+                label="📥 Dossier (PDF)",
+                data=ExportManager.to_pdf(report, profile),
                 file_name=f"{Path(cv_name).stem}_Executive_Dossier.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
-        with col_export_2:
+        with col_exp2:
             st.download_button(
-                label="💾 Download Full Intelligence Dossier (JSON)",
+                label="📄 Word (.docx)",
+                data=ExportManager.to_docx(report, profile),
+                file_name=f"{Path(cv_name).stem}_Career_Dossier.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                use_container_width=True
+            )
+        with col_exp3:
+            st.download_button(
+                label="📝 Markdown (.md)",
+                data=ExportManager.to_markdown(report, profile),
+                file_name=f"{Path(cv_name).stem}_Career_Plan.md",
+                mime="text/markdown",
+                use_container_width=True
+            )
+        with col_exp4:
+            st.download_button(
+                label="💾 Raw Data (JSON)",
                 data=json_str,
                 file_name=f"{Path(cv_name).stem}_intelligence_dossier.json",
                 mime="application/json",

@@ -3,25 +3,25 @@ r"""
 scripts/export_to_sqlserver.py - Universal SQLite -> Microsoft SQL Server Exporter
 =============================================================================
 
-الغرض (Purpose):
-- نقل وتصدير كامل بيانات قاعدة بيانات SQLite (jobs.db) إلى Microsoft SQL Server:
-  1. توليد سكربت T-SQL كامل وشامل وجاهز للتشغيل مباشرة في SSMS (SQL Server Management Studio).
-  2. تحويل أنواع البيانات آلياً من SQLite إلى Microsoft SQL Server (T-SQL).
-  3. نقل جميع الجداول:
-     - jobs (3,432 وظيفة تقنية حية مع كافة الحقول)
-     - candidates (بيانات وسير المرشحين)
-     - reports (تقارير التقييم التنفيذية)
-     - report_evaluations (تقييمات الوظائف وخطابات التقديم ولينكد إن)
-     - partition_summaries (ملخصات التقسيم الجغرافي)
-     - skills & job_skills & scrape_runs
-  4. دعم النقل المباشر عبر pyodbc و Windows Authentication بنقرة واحدة.
+PURPOSE:
+- Export the complete SQLite database (jobs.db) into Microsoft SQL Server:
+  1. Generate a self-contained T-SQL script executable directly in SSMS (SQL Server Management Studio).
+  2. Automatically map SQLite data types to Microsoft SQL Server T-SQL types.
+  3. Export all relational tables:
+     - jobs (active tech opportunities with full metadata)
+     - candidates (extracted candidate profiles)
+     - reports (executive AI advisory reports)
+     - report_evaluations (job matches, cover letters, and outreach pitches)
+     - partition_summaries (geographic and remote partitions)
+     - skills & job_skills (relational skill links)
+  4. Support direct database migration via pyodbc with Windows Authentication.
 
-الاستخدام (Usage):
-  1. توليد ملف SQL لتشغيله في SSMS:
+USAGE:
+  1. Generate T-SQL script for SSMS:
      python scripts/export_to_sqlserver.py
-  2. النقل المباشر عبر السيرفر:
+  2. Direct migration to live SQL Server instance:
      python scripts/export_to_sqlserver.py --server localhost
-     أو
+     or
      python scripts/export_to_sqlserver.py --server .\SQLEXPRESS
 =============================================================================
 """

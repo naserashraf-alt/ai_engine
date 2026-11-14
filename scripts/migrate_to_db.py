@@ -4,7 +4,7 @@ Converts jobs_dataset.json -> SQLite database (jobs.db).
 Preserves all 7,211+ jobs with full data integrity.
 
 Usage:
-    python C:/Users/Naseer/.gemini/antigravity/scratch/ai_project/scripts/migrate_to_db.py
+    python scripts/migrate_to_db.py
 """
 
 import os

@@ -1,23 +1,23 @@
 """
 =============================================================================
-src/pdf_generator.py - منشئ تقارير المسار المهني الاحترافية (Executive Dossier PDF)
+src/pdf_generator.py - Executive Career Dossier PDF Generator
 =============================================================================
 
-الغرض (Purpose):
-- توليد ملفات PDF تنفيذية احترافية بتنسيق عالمي أنيق (Executive Career Dossier).
-- يتضمن التقرير:
-  1. بطاقة المرشح والتقييم التنفيذي للقدرات (Executive Capability Profile).
-  2. بطاقات الوظائف المرشحة وروابط التقديم المباشرة وخطة العمل ذات الـ 3 خطوات.
-  3. إعادة صياغة السيرة الذاتية وفق معيار Google XYZ لمطابقة أنظمة الـ ATS.
-  4. الخطة الاستراتيجية للنمو الفني لمدة 12 أسبوعاً (12-Week Upskilling Roadmap).
-  5. خطاب التقديم المخصص (Tailored Cover Letter) ورسالة التواصل عبر لينكد إن (LinkedIn Pitch).
+PURPOSE:
+- Generate polished, professional executive PDF reports (Executive Career Dossier).
+- The generated dossier includes:
+  1. Executive Candidate Capability Profile.
+  2. Targeted Job Opportunities with verified apply URLs and 3-step action plans.
+  3. Google XYZ ATS Resume Transformations.
+  4. Strategic 12-Week Upskilling Roadmap.
+  5. Tailored Cover Letter and Outreach Pitch.
 
-المدخلات والمخرجات (Inputs / Outputs):
-- المدخل: كائن التقرير (CareerAgentReport) والملف الشخصي للمرشح (ResumeProfile).
-- المخرج: بايتس ملف PDF جاهزة للتحميل (bytes) أو الحفظ على القرص.
+INPUTS / OUTPUTS:
+- Inputs: CareerAgentReport and ResumeProfile models.
+- Output: PDF file bytes ready for download or disk persistence.
 
-الاتصالات والتبعيات (Dependencies & Connections):
-- يُستورد في: app.py, run_agent.py
+DEPENDENCIES:
+- Imported in: app.py, run_agent.py
 =============================================================================
 """
 
