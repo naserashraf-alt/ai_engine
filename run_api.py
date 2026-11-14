@@ -24,12 +24,18 @@ import uvicorn
 
 
 def open_browser():
-    """Automatically launches the browser to interactive Swagger API docs."""
-    time.sleep(1.2)
-    try:
-        webbrowser.open("http://localhost:8000/docs")
-    except Exception:
-        pass
+    """Waits until the server is actively responding before launching the browser."""
+    import urllib.request
+    for _ in range(40):
+        time.sleep(0.4)
+        try:
+            with urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=1) as resp:
+                if resp.status == 200:
+                    time.sleep(0.2)
+                    webbrowser.open("http://localhost:8000/docs")
+                    break
+        except Exception:
+            continue
 
 
 if __name__ == "__main__":

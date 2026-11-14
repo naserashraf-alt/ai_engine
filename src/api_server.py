@@ -26,6 +26,7 @@ from contextlib import asynccontextmanager
 
 import httpx
 from fastapi import FastAPI, BackgroundTasks, HTTPException, status
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -183,6 +184,12 @@ async def run_job_seeker_matching_background(job_seeker_id: str, request_id: str
 # -----------------------------------------------------------------------------
 # API Endpoints
 # -----------------------------------------------------------------------------
+
+@app.get("/", include_in_schema=False)
+def root():
+    """Redirect root traffic directly to interactive Swagger API docs."""
+    return RedirectResponse(url="/docs")
+
 
 @app.get("/health", status_code=status.HTTP_200_OK)
 def health_check():

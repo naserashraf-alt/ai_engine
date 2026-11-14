@@ -32,7 +32,6 @@ goto end
 :run_api
 echo.
 echo Launching Yalla Neshtaghal FastAPI Microservice...
-start http://localhost:8000/docs
 "C:\Users\ELSAKR TECH\ai_engine_venv\Scripts\python.exe" run_api.py
 goto end
 
@@ -40,7 +39,6 @@ goto end
 echo.
 echo Launching Full Stack (Dashboard + Backend API)...
 start "Yalla Neshtaghal API Server (:8000)" cmd /c "cd /d "%~dp0" && "C:\Users\ELSAKR TECH\ai_engine_venv\Scripts\python.exe" run_api.py"
-start http://localhost:8000/docs
 start http://localhost:8501
 "C:\Users\ELSAKR TECH\ai_engine_venv\Scripts\python.exe" -m streamlit run app.py
 goto end
